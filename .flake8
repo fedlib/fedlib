@@ -1,0 +1,12 @@
+[flake8]
+exclude =
+    docs,
+    .git,
+    __pycache__,
+    build,
+    dist,
+    fllib/models/backbones/*
+
+max-line-length = 88
+max-complexity = 100
+ignore = W293,W504,W503,E203
