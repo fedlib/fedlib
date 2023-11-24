@@ -202,7 +202,7 @@
 
 
 ---------------------------------------------------------------------------------------------------------------------------
-Code in fllib/models/backbones/cctnets is adapted from https://github.com/SHI-Labs/Compact-Transformers
+Code in fedlib/models/backbones/cctnets is adapted from https://github.com/SHI-Labs/Compact-Transformers
 
 # Copyright 2018, SHI-Labs
 #

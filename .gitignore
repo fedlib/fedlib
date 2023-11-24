@@ -17,5 +17,6 @@ scripts/data
 */build/
 ./src/dist/
 *.pytest_cache/
-fllib/datasets/test/~/fllib/data/cifar10
+fedlib/datasets/test/~/fedlib/data/cifar10
 *.DS_Store
+*.lock

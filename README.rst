@@ -9,11 +9,11 @@
         :alt: Static Badge
         :target: https://arxiv.org/pdf/2206.05359.pdf
 
-    .. image:: https://img.shields.io/github/last-commit/lishenghui/blades/master?logo=Github
+    .. image:: https://img.shields.io/github/last-commit/fedlib/fedlib/main?logo=Github
         :alt: GitHub last commit (branch)
-        :target: https://github.com/lishenghui/blades
+        :target: https://github.com/fedlib/fedlib
 
-    .. image:: https://img.shields.io/github/actions/workflow/status/lishenghui/blades/.github%2Fworkflows%2Funit-tests.yml?logo=Pytest&logoColor=hsl&label=Unit%20Testing
+    .. image:: https://img.shields.io/github/actions/workflow/status/fedlib/fedlib/.github%2Fworkflows%2Funit-tests.yml?logo=Pytest&logoColor=hsl&label=Unit%20Testing
        :alt: GitHub Workflow Status (with event)
 
     .. image:: https://img.shields.io/badge/Pytorch-2.0-brightgreen?logo=pytorch&logoColor=red
@@ -24,22 +24,14 @@
        :alt: Static Badge
        :target: https://docs.ray.io/en/releases-2.8.0/
 
-    .. image:: https://readthedocs.org/projects/blades/badge/?version=latest
-        :target: https://blades.readthedocs.io/en/latest/?badge=latest
+    .. image:: https://readthedocs.org/projects/fedlib/badge/?version=latest
+        :target: https://fedlib.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-    .. image:: https://img.shields.io/github/license/lishenghui/blades?logo=apache&logoColor=red
+    .. image:: https://img.shields.io/github/license/fedlib/fedlib?logo=apache&logoColor=red
         :alt: GitHub
-        :target: https://github.com/lishenghui/blades/blob/master/LICENSE
+        :target: https://github.com/fedlib/fedlib/blob/master/LICENSE
 
-
-.. .. raw:: html
-
-..     <p align=center>
-..         <img src="https://github.com/lishenghui/blades/raw/master/docs/source/images/arch.png" width="1000" alt="Blades Logo">
-..     </p>
-
-.. image:: https://github.com/lishenghui/blades/raw/master/docs/source/images/arch.png
 
 
 
@@ -48,8 +40,8 @@ Installation
 
 .. code-block:: bash
 
-    git clone https://github.com/lishenghui/blades
-    cd blades
+    git clone https://github.com/fedlib/fedlib
+    cd fedlib
     pip install -v -e .
     # "-v" means verbose, or more output
     # "-e" means installing a project in editable mode,
