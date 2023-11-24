@@ -80,7 +80,7 @@ class Algorithm(Trainable):
             ) from err
 
     def setup(self, config: AlgorithmConfig):
-        # Setup our config: Merge the user-supplied config dict (which could
+        # Set up our config: Merge the user-supplied config dict (which could
         # be a partial config dict) with the class' default.
 
         callback = from_config(config.pop("callbacks_config"))
@@ -105,6 +105,8 @@ class Algorithm(Trainable):
                 group=config.get("wandb_group", None),
                 project=config.get("wandb_project", None),
             )
+
+        self.callbacks.on_algorithm_init(algorithm=self)
 
     def step(self) -> ResultDict:
         # `self.iteration` gets incremented after this function returns,

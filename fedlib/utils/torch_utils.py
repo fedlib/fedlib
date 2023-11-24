@@ -4,7 +4,6 @@ from typing import Iterable, Dict, Optional, TYPE_CHECKING, Union
 
 import numpy as np
 import ray
-
 from ray.rllib.utils.annotations import Deprecated, PublicAPI
 from ray.rllib.utils.framework import try_import_torch
 from ray.rllib.utils.typing import (

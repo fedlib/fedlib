@@ -1,7 +1,7 @@
 import os.path as osp
 import sys
-import blades_sphinx_theme
 
+import blades_sphinx_theme
 
 project = "blades"
 copyright = "2023, Shenghui Li"

@@ -11,8 +11,8 @@ from torchvision.datasets.utils import (
 )
 
 from fedlib.constants import DEFAULT_DATA_ROOT
-from .dataset import FLDataset
 from .clientdataset import ClientDataset
+from .dataset import FLDataset
 
 
 class EmptyDataset(data.Dataset):

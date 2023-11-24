@@ -26,7 +26,7 @@ torch = "^2.0.1"
 torchvision = "~0.15.2"
 torchaudio = "*"
 numpy = "^1.26.1"
-ray = "^2.8.0"
+ray = { version = "^2.7.0", extras = ["rllib"] }
 matplotlib = "^3.8.1"
 requests = "^2.27.1"
 setuptools = "*"

@@ -7,7 +7,6 @@ from ray.rllib.utils.from_config import from_config
 from fedlib.clients.callbacks import ClientCallbackList, ClientCallback
 from fedlib.constants import CLIENT_UPDATE
 from fedlib.core.execution.session import get_session
-
 from .client_config import ClientConfig
 
 

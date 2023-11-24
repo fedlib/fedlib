@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 class AlgorithmConfig:
-    """A RLlib AlgorithmConfig builds an RLlib Algorithm from a given
+    """A Fedlib AlgorithmConfig builds a Fedlib Algorithm from a given
     configuration.
 
     Example:
@@ -158,6 +158,30 @@ class AlgorithmConfig:
             self.num_gpus_for_driver = num_gpus_for_driver
         if num_remote_workers is not NotProvided:
             self.num_remote_workers = num_remote_workers
+        return self
+
+    def callbacks(self, callbacks_class) -> "AlgorithmConfig":
+        """Sets the callbacks configuration.
+
+        Args:
+            callbacks_class: Callbacks class, whose methods will be run during
+                various phases of training and environment sample collection.
+                See the `DefaultCallbacks` class and
+                `examples/custom_metrics_and_callbacks.py` for more usage information.
+
+        Returns:
+            This updated AlgorithmConfig object.
+        """
+        if callbacks_class is None:
+            callbacks_class = AlgorithmCallback
+        # Check, whether given `callbacks` is a callable.
+        if not callable(callbacks_class):
+            raise ValueError(
+                "`config.callbacks_class` must be a callable method that "
+                "returns a subclass of AlgorithmCallbacks, got "
+                f"{callbacks_class}!"
+            )
+        self.callbacks_config = callbacks_class
         return self
 
     def get_task_spec(self) -> TaskSpec:

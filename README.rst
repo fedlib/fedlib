@@ -1,4 +1,3 @@
-
 .. .. raw:: html
 
 ..     <div style="text-align: center;">
@@ -50,7 +49,7 @@ Installation
 
 .. code-block:: bash
 
-    cd blades/blades
+    cd fedlib/fedlib
     python train.py file ./tuned_examples/fedsgd_cnn_fashion_mnist.yaml
 
 
@@ -84,13 +83,12 @@ Data Partitioners:
 Dirichlet Partitioner
 ----------------------
 
-.. image:: https://github.com/lishenghui/blades/raw/master/docs/source/images/dirichlet_partition.png
+.. image:: https://github.com/fedlib/fedlib/raw/main/docs/source/images/dirichlet_partition.png
 
 Sharding Partitioner
 ----------------------
 
-.. image:: https://github.com/lishenghui/blades/raw/master/docs/source/images/shard_partition.png
-
+.. image:: https://github.com/fedlib/fedlib/raw/main/docs/source/images/shard_partition.png
 
 Citation
 =========

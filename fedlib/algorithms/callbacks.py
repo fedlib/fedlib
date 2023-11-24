@@ -1,12 +1,14 @@
 import warnings
 from typing import List, TYPE_CHECKING
 
+from ray.tune.callback import _CallbackMeta
+
 if TYPE_CHECKING:
     from fedlib.algorithms import Algorithm
 
 
-class AlgorithmCallback:
-    """Abstract base class for RLlib callbacks (similar to Keras callbacks).
+class AlgorithmCallback(metaclass=_CallbackMeta):
+    """Abstract base class for Fedlib callbacks (similar to Keras callbacks).
 
     These callbacks can be used for custom metrics and custom postprocessing.
 
@@ -24,6 +26,14 @@ class AlgorithmCallback:
         **info,
     ):
         self._algorithm = algorithm
+
+    def on_algorithm_init(self, *, algorithm: "Algorithm", **kwargs):
+        """Called at the end of Algorithm.__init__.
+
+        Subclasses should override for any actions to run.
+        Args:
+            algorithm (Algorithm): The Algorithm object.
+        """
 
     def on_train_round_begin(self) -> None:
         """Called at the beginning of each local training round in
@@ -45,6 +55,9 @@ class AlgorithmCallbackList:
         self._callbacks = callbacks
         self._algorithm = None
 
+    def __getitem__(self, item):
+        return self._callbacks[item]
+
     def setup(self, algorithm, **info):
         self._algorithm = algorithm
         for callback in self._callbacks:
@@ -65,6 +78,10 @@ class AlgorithmCallbackList:
     def append(self, callback: AlgorithmCallback):
         callback.setup(self._algorithm)
         self._callbacks.append(callback)
+
+    def on_algorithm_init(self, *, algorithm: "Algorithm", **kwargs):
+        for callback in self._callbacks:
+            callback.on_algorithm_init(algorithm=algorithm, **kwargs)
 
     def on_train_round_begin(self) -> None:
         for callback in self._callbacks:

@@ -1,14 +1,14 @@
 import ray
+from fedlib.algorithms.fedavg import FedavgConfig, Fedavg
 from ray import tune
 from ray.tune.stopper import MaximumIterationStopper
 
-from blades.algorithms.fedavg import FedavgConfig, Fedavg
 from fedlib.algorithms import AlgorithmConfig
 
 
 class ExampleFedavgConfig(FedavgConfig):
     def __init__(self, algo_class=None):
-        """Initializes a FedavgConfig instance."""
+        """Initialize a FedavgConfig instance."""
         super().__init__(algo_class=algo_class or ExampleFedavg)
 
         self.dataset_config = {
