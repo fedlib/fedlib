@@ -40,7 +40,7 @@ class TestActorManager(unittest.TestCase):
         results = manager.execute_with_actor_pool(
             lambda actor, value: value, values=values
         )
-        self.assertEquals(results, values)
+        self.assertEqual(results, values)
 
         affinity_actors = [[actor] for actor in actors]
         results = manager.execute_with_actor_pool(

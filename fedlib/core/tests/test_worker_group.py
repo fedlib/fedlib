@@ -18,7 +18,7 @@ class TestWorkerGroup(unittest.TestCase):
         wg_config = WorkerGroupConfig().resources(
             num_remote_workers=2,
             num_cpus_per_worker=1,
-            num_gpus_per_worker=0.2,
+            num_gpus_per_worker=0.,
             local_gpu_idx=0,
         )
         worker_group: WorkerGroup = wg_config.build()
