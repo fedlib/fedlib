@@ -34,10 +34,10 @@ if __name__ == "__main__":
     config_dict = (
         ExampleFedavgConfig()
         .resources(
-            num_gpus_for_driver=0.5,
+            num_gpus_for_driver=0.0,
             num_cpus_for_driver=1,
             num_remote_workers=0,
-            num_gpus_per_worker=0.5,
+            num_gpus_per_worker=0.0,
         )
         .to_dict()
     )

@@ -33,7 +33,7 @@ class Worker:
             self.device = (
                 "cuda" if worker_scaling_config.num_gpus_per_worker > 0 else device
             )
-        # if we are using gpu but we are not distributed, use this gpu for training
+        # if we are using gpu, but we are not distributed, use this gpu for training
         # self._local_gpu_idx = worker_scaling_config.local_gpu_idx
         global_worker = ray._private.worker.global_worker
         global_worker.actors[MAIN_ACTOR] = self

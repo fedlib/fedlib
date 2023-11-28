@@ -110,7 +110,7 @@ class Algorithm(Trainable):
 
     def step(self) -> ResultDict:
         # `self.iteration` gets incremented after this function returns,
-        # meaning that e. g. the first time this function is called,
+        # meaning that e.g. the first time this function is called,
         # self.iteration will be 0.
         evaluate_this_iter = (
             self.config.evaluation_interval is not None

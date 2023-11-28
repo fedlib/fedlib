@@ -191,6 +191,12 @@ class Task:
         for opt, state in zip(self._optimizers, states):
             opt.load_state_dict(state)
 
+    def get_model_states(self):
+        return self._model.state_dict()
+
+    def set_model_states(self, states):
+        self._model.load_state_dict(states)
+
     def _init_model(self):
         if is_overridden(self.make_model):
             model = self.make_model()

@@ -1,19 +1,16 @@
 from collections import defaultdict
-from typing import DefaultDict, List, Dict
+from typing import Dict
 
 import numpy as np
-import ray
 from ray.rllib.utils.annotations import override
 from ray.rllib.utils.debug import update_global_seed_if_necessary
 from ray.util.timer import _Timer
 
 from fedlib.algorithms import Algorithm, AlgorithmConfig
 from fedlib.clients import ClientConfig
-from fedlib.constants import CLIENT_UPDATE, GLOBAL_MODEL, NUM_GLOBAL_STEPS
-from fedlib.core import WorkerGroupConfig
-from fedlib.core.execution.worker_group import WorkerGroup
-from fedlib.datasets import DatasetCatalog
-from fedlib.datasets import FLDataset
+from fedlib.constants import CLIENT_UPDATE, NUM_GLOBAL_STEPS
+from fedlib.core import WorkerGroupConfig, WorkerGroup, ClientWorkerGroup
+from fedlib.datasets import FLDataset, DatasetCatalog
 from fedlib.types import PartialAlgorithmConfigDict
 
 
@@ -38,7 +35,7 @@ class FedavgConfig(AlgorithmConfig):
             )
 
         config = (
-            WorkerGroupConfig()
+            WorkerGroupConfig(cls=ClientWorkerGroup)
             .resources(
                 num_remote_workers=self.num_remote_workers,
                 num_cpus_per_worker=self.num_cpus_per_worker,
@@ -79,7 +76,6 @@ class Fedavg(Algorithm):
     """Federated Averaging Algorithm."""
 
     def __init__(self, config=None, logger_creator=None, **kwargs):
-        self._client_actors_affinity: DefaultDict[int, List[int]] = defaultdict(list)
         self.local_results = []
         super().__init__(config, logger_creator, **kwargs)
 
@@ -121,17 +117,9 @@ class Fedavg(Algorithm):
         self.global_vars = defaultdict(lambda: defaultdict(list))
 
         clients = self.client_manager.clients
-        if self.worker_group.workers:
-            affinity_actors = [
-                self._client_actors_affinity[client.client_id] for client in clients
-            ]
-            self.local_results = self.worker_group.execute_with_actor_pool(
-                lambda _, client: client.setup(), clients, affinity_actors
-            )
-        else:
-            self.local_results = self.worker_group.local_execute(
-                lambda _, client: client.setup(), clients
-            )
+        self.local_results = self.worker_group.foreach_execution(
+            lambda _, client: client.setup(), clients
+        )
 
     def _setup_worker_group(self) -> WorkerGroup:
         worker_group_config = self.config.get_worker_group_config()
@@ -140,32 +128,10 @@ class Fedavg(Algorithm):
 
     def _setup_dataset(self):
         self._dataset = DatasetCatalog.get_dataset(self.config.dataset_config)
-
-        if self.worker_group.workers:
-
-            def setup_dataset(subset):
-                def bind_dataset(worker):
-                    setattr(worker, "dataset", subset)
-                    return ray.get_runtime_context().get_actor_id(), subset.client_ids
-
-                return bind_dataset
-
-            subdatasets = self._dataset.split(len(self.worker_group.workers))
-            results = self.worker_group.foreach_actor(
-                [setup_dataset(subset) for subset in subdatasets]
-            )
-            results = [result.get() for result in results.ignore_errors()]
-
-            for actor, clients in results:
-                for client in clients:
-                    self._client_actors_affinity[client].append(actor)
-        else:
-            self.worker_group.local_worker().dataset = self._dataset
+        self.worker_group.setup_datasets(self._dataset)
 
     def training_step(self):
-        self.worker_group.sync_state(
-            GLOBAL_MODEL, self.server.get_global_model().state_dict()
-        )
+        self.worker_group.sync_weights(self.server.get_global_model().state_dict())
 
         def local_training(worker, client):
             if isinstance(worker.dataset, FLDataset):
@@ -175,20 +141,11 @@ class Fedavg(Algorithm):
             return client.train_one_round(dataset)
 
         clients = self.client_manager.trainable_clients
-        if self.worker_group.workers:
-            affinity_actors = [
-                self._client_actors_affinity[client.client_id] for client in clients
-            ]
-            self.local_results = self.worker_group.execute_with_actor_pool(
-                local_training, clients, affinity_actors
-            )
-        else:
-            self.local_results = self.worker_group.local_execute(
-                local_training, clients
-            )
+        self.local_results = self.worker_group.foreach_execution(
+            local_training, clients
+        )
 
         updates = [result.pop(CLIENT_UPDATE, None) for result in self.local_results]
-
         losses = []
         for result in self.local_results:
             loss = result.pop("avg_loss")
@@ -206,9 +163,7 @@ class Fedavg(Algorithm):
         return results
 
     def evaluate(self):
-        self.worker_group.sync_state(
-            GLOBAL_MODEL, self.server.get_global_model().state_dict()
-        )
+        self.worker_group.sync_weights(self.server.get_global_model().state_dict())
         clients = self.client_manager.testable_clients
 
         def validate_func(worker, client):
@@ -221,16 +176,8 @@ class Fedavg(Algorithm):
                 test_loader = worker.dataset.get_test_loader(client.client_id)
             return client.evaluate(test_loader)
 
-        if self.worker_group.workers:
-            affinity_actors = [
-                self._client_actors_affinity[client.client_id] for client in clients
-            ]
+        evaluate_results = self.worker_group.foreach_execution(validate_func, clients)
 
-            evaluate_results = self.worker_group.execute_with_actor_pool(
-                validate_func, clients, affinity_actors
-            )
-        else:
-            evaluate_results = self.worker_group.local_execute(validate_func, clients)
         results = {
             "ce_loss": np.average(
                 [metric["ce_loss"] for metric in evaluate_results],

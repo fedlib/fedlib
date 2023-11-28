@@ -499,3 +499,5 @@ class AlgorithmConfig:
         """Configures evaluation settings."""
         if evaluation_interval is not NotProvided:
             self.evaluation_interval = evaluation_interval
+
+        return self

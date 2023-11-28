@@ -1,5 +1,6 @@
+from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Callable, List, TypeVar, Union
+from typing import Any, Callable, TypeVar, Union, DefaultDict, List
 
 import ray
 from ray.actor import ActorHandle
@@ -74,8 +75,17 @@ class WorkerGroup:
         """Sync global weights to given WorkerSet or list of workers."""
         if self._workers:
             results = self._worker_manager.foreach_actor(
+                lambda w: w.set_state(name, source_state)
+            )
+        else:
+            results = self.local_worker().set_state(name, source_state)
+        return results
+
+    def sync_weights(self, source_state: Any) -> None:
+        """Sync global weights to given WorkerSet or list of workers."""
+        if self._workers:
+            results = self._worker_manager.foreach_actor(
                 lambda w: w.task.set_weights(source_state)
-                # lambda w: w.set_state(name, source_state)
             )
         else:
             results = self.local_worker().task.set_weights(source_state)
@@ -144,3 +154,45 @@ class WorkerGroup:
         for value in values:
             results.append(func(self.local_worker(), value))
         return results
+
+
+class ClientWorkerGroup(WorkerGroup):
+    def __init__(self, remote_worker_spec):
+        super().__init__(remote_worker_spec)
+        self._client_actors_affinity: DefaultDict[int, List[int]] = defaultdict(list)
+
+    def setup_datasets(self, fldataset):
+        if self.workers:
+
+            def setup_dataset(subset):
+                def bind_dataset(worker):
+                    setattr(worker, "dataset", subset)
+                    return ray.get_runtime_context().get_actor_id(), subset.client_ids
+
+                return bind_dataset
+
+            subdatasets = fldataset.split(len(self.workers))
+            results = self.foreach_actor(
+                [setup_dataset(subset) for subset in subdatasets]
+            )
+            results = [result.get() for result in results.ignore_errors()]
+
+            for actor, clients in results:
+                for client in clients:
+                    self._client_actors_affinity[client].append(actor)
+        else:
+            self.local_worker().dataset = fldataset
+
+    def foreach_execution(
+        self,
+        func: Callable,
+        values: List[Any],
+    ):
+        if self.workers:
+            affinity_actors = [
+                self._client_actors_affinity[client.client_id] for client in values
+            ]
+            local_results = self.execute_with_actor_pool(func, values, affinity_actors)
+        else:
+            local_results = self.local_execute(func, values)
+        return local_results
