@@ -4,7 +4,6 @@
 *.egg-info
 *__pycache__*
 *outputs
-scripts/data
 *.pyc
 *.idea
 *data_batch_*
@@ -15,8 +14,8 @@ scripts/data
 *.pkl
 *test_batch*
 */build/
-./src/dist/
+*/dist
 *.pytest_cache/
-fedlib/datasets/test/~/fedlib/data/cifar10
 *.DS_Store
 *.lock
+*/.ipynb_checkpoints/

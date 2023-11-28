@@ -3,10 +3,10 @@ from typing import Callable, Iterator, List
 import numpy as np
 from torch.utils.data import Dataset, Subset
 
-from .dataset_splitter import DatasetSplitter
+from .dataset_partitioner import DatasetPartitioner
 
 
-class ShardSplitter(DatasetSplitter):
+class ShardPartitioner(DatasetPartitioner):
     def __init__(
         self,
         num_clients: int,

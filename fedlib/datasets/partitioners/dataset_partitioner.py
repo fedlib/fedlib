@@ -9,8 +9,7 @@ from torch.utils.data import Dataset, Subset
 from fedlib.datasets.clientdataset import ClientDataset
 
 
-# TODO: Rename to DatasetPartitioner, which sounds more appropriate.
-class DatasetSplitter(ABC):
+class DatasetPartitioner(ABC):
     """An abstract base class for dataset splitting strategies that considers
     random states from both NumPy and PyTorch."""
 

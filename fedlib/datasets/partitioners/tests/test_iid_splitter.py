@@ -3,8 +3,8 @@ import unittest
 import torch
 from torch.utils.data import Dataset
 
-# Assuming IIDSplitter is defined in the fedlib.datasets.splitters module
-from fedlib.datasets.splitters import IIDSplitter
+# Assuming IIDSplitter is defined in the fedlib.datasets.partitioners module
+from fedlib.datasets.partitioners import IIDPartitioner
 
 
 # Mock Dataset
@@ -29,7 +29,7 @@ class TestIIDSplitter(unittest.TestCase):
         dataset = MockDataset(dataset_size)
 
         # Initialize IID splitter
-        splitter = IIDSplitter(num_clients=num_clients)
+        splitter = IIDPartitioner(num_clients=num_clients)
 
         # Split the dataset
         subsets = splitter.split_dataset(dataset)
@@ -54,7 +54,7 @@ class TestIIDSplitter(unittest.TestCase):
         test_dataset = MockDataset(dataset_size)
 
         # Initialize IID splitter
-        splitter = IIDSplitter(num_clients=num_clients)
+        splitter = IIDPartitioner(num_clients=num_clients)
 
         # Split the datasets
         paired_subsets = splitter.generate_paired_subsets(train_dataset, test_dataset)

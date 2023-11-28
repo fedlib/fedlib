@@ -3,10 +3,10 @@ from typing import List, Callable, Iterator, Any
 import torch
 from torch.utils.data import Dataset, Subset
 
-from .dataset_splitter import DatasetSplitter
+from .dataset_partitioner import DatasetPartitioner
 
 
-class DirichletSplitter(DatasetSplitter):
+class DirichletPartitioner(DatasetPartitioner):
     def __init__(
         self,
         num_clients: int = 4,

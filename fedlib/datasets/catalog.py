@@ -7,16 +7,10 @@ from ray.rllib.utils.from_config import from_config
 from ray.tune.registry import _global_registry
 
 from fedlib.constants import fedlib_DATASET
-from fedlib.datasets.splitters import IIDSplitter
+from fedlib.datasets.partitioners import IIDPartitioner
 from fedlib.utils.types import DatasetConfigDict
 from .dataset import FLDataset
 from .ucihar import UCIHAR
-
-# @dataclass
-# class DatasetConfig:
-#     def __init__(self):
-#         splitter_config = {}
-
 
 _fedlib_DATASETS = ["UCIHAR"]
 
@@ -108,10 +102,10 @@ class DatasetCatalog:
             transform=torchvision_transforms[dataset_name]["test"],
             download=True,
         )
-        splitter_config = dataset_config.pop("splitter_config", {})
+        partitioner_config = dataset_config.pop("partitioner_config", {})
         train_batch_size = dataset_config.pop("train_batch_size", 32)
         test_batch_size = dataset_config.pop("test_batch_size", 32)
-        splitter = from_config(IIDSplitter, splitter_config)
+        splitter = from_config(IIDPartitioner, partitioner_config)
         subsets = splitter.generate_client_datasets(
             train_set,
             test_set,

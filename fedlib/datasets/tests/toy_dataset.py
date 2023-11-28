@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import Dataset
 
 from fedlib.datasets import FLDataset
-from fedlib.datasets.splitters import IIDSplitter
+from fedlib.datasets.partitioners import IIDPartitioner
 
 
 class _ToyDataset(Dataset):
@@ -24,7 +24,7 @@ class ToyFLDataset(FLDataset):
 
     def __init__(self) -> None:
         toy_train_set = _ToyDataset()
-        splitter = IIDSplitter(num_clients=self.num_clients)
+        splitter = IIDPartitioner(num_clients=self.num_clients)
         client_datasets = splitter.generate_client_datasets(
             toy_train_set,
             toy_train_set,

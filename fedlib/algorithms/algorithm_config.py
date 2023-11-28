@@ -90,7 +90,7 @@ class AlgorithmConfig:
 
         # self.data()`
         self.dataset_config = {}
-        self.splitter_config = {}
+        self.partitioner_config = {}
         self.num_clients = 0
 
         self.reuse_actors = True
@@ -346,11 +346,11 @@ class AlgorithmConfig:
                         " in your `dataset_config`",
                     )
                 self.num_clients = self.dataset_config["num_clients"]
-            self.splitter_config["num_clients"] = self.num_clients
+            self.partitioner_config["num_clients"] = self.num_clients
             if self.dataset_config.get("random_seed", None) is None:
                 self.dataset_config["random_seed"] = self.random_seed
-            self.splitter_config["random_seed"] = self.dataset_config["random_seed"]
-            self.dataset_config["splitter_config"] = self.splitter_config
+            self.partitioner_config["random_seed"] = self.dataset_config["random_seed"]
+            self.dataset_config["partitioner_config"] = self.partitioner_config
         if self.dataset_config.get("random_seed", None) is None:
             self.dataset_config["random_seed"] = self.random_seed
 

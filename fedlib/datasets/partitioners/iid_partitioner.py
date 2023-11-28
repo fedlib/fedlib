@@ -3,10 +3,10 @@ from typing import List
 import torch
 from torch.utils.data import Dataset, Subset
 
-from .dataset_splitter import DatasetSplitter
+from .dataset_partitioner import DatasetPartitioner
 
 
-class IIDSplitter(DatasetSplitter):
+class IIDPartitioner(DatasetPartitioner):
     def split_dataset(self, dataset: Dataset) -> List[Subset]:
         # Shuffle the dataset indices using PyTorch
         indices = torch.randperm(len(dataset)).tolist()

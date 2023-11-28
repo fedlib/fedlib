@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-from fedlib.datasets.splitters import DirichletSplitter
+from fedlib.datasets.partitioners import DirichletPartitioner
 
 
 # Mock Dataset
@@ -32,7 +32,7 @@ class TestDirichletSplitter(unittest.TestCase):
         dataset = MockDataset(dataset_size, num_classes)
 
         # Initialize Dirichlet splitter
-        splitter = DirichletSplitter(num_clients=num_clients, alpha=alpha)
+        splitter = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
 
         # Split the dataset
         subsets = splitter.split_dataset(dataset)
@@ -58,7 +58,7 @@ class TestDirichletSplitter(unittest.TestCase):
         dataset = MockDataset(dataset_size, num_classes)
 
         # Initialize Dirichlet splitter
-        splitter = DirichletSplitter(num_clients=num_clients, alpha=alpha)
+        splitter = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
 
         # Split the dataset
         subsets = splitter.split_dataset(dataset)
@@ -86,7 +86,7 @@ class TestDirichletSplitter(unittest.TestCase):
         prev_std_devs = np.inf
         for alpha in alphas:
             dataset = MockDataset(dataset_size, num_classes)
-            splitter = DirichletSplitter(num_clients=num_clients, alpha=alpha)
+            splitter = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
             subsets = splitter.split_dataset(dataset)
 
             # Calculate the distribution of each class for each client
@@ -115,7 +115,7 @@ class TestDirichletSplitter(unittest.TestCase):
         dataset_test = MockDataset(dataset_size, num_classes)
 
         # Initialize Dirichlet splitter
-        splitter = DirichletSplitter(
+        splitter = DirichletPartitioner(
             num_clients=num_clients, alpha=alpha, same_proportions=True
         )
 
