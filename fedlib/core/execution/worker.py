@@ -7,7 +7,7 @@ from torch import Tensor
 from fedlib.constants import MAIN_ACTOR
 from fedlib.core.execution.scaling_config import WorkerGroupScalingConfig
 from fedlib.tasks import TaskSpec, Task
-from fedlib.types import ModelWeights
+from fedlib.utils.types import ModelWeights
 from fedlib.utils.annotations import DeveloperAPI
 
 T = TypeVar("T")

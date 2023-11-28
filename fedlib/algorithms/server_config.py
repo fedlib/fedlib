@@ -7,8 +7,7 @@ from ray.rllib.utils.from_config import from_config
 from ray.util import log_once
 
 # from fedlib.clients.callbacks import ClientCallback
-from fedlib.types import NotProvided, PartialAlgorithmConfigDict
-from fedlib.types import TYPE_CHECKING
+from fedlib.utils.types import NotProvided, PartialAlgorithmConfigDict, TYPE_CHECKING
 
 if TYPE_CHECKING:
     pass

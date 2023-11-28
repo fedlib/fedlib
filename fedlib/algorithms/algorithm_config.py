@@ -16,7 +16,7 @@ from fedlib.constants import fedlib_DATASET
 from fedlib.core.execution.worker import Worker
 from fedlib.core.execution.worker_group_config import WorkerGroupConfig
 from fedlib.tasks import TaskSpec
-from fedlib.types import (
+from fedlib.utils.types import (
     AlgorithmConfigDict,
     PartialAlgorithmConfigDict,
     TYPE_CHECKING,

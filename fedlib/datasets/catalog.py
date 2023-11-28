@@ -8,7 +8,7 @@ from ray.tune.registry import _global_registry
 
 from fedlib.constants import fedlib_DATASET
 from fedlib.datasets.splitters import IIDSplitter
-from fedlib.types import DatasetConfigDict
+from fedlib.utils.types import DatasetConfigDict
 from .dataset import FLDataset
 from .ucihar import UCIHAR
 

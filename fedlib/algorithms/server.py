@@ -11,7 +11,7 @@ from torch import Tensor
 
 from fedlib.aggregators import Mean
 from fedlib.tasks import TaskSpec, Task
-from fedlib.types import ModelWeights
+from fedlib.utils.types import ModelWeights
 
 
 class _Base:

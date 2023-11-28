@@ -19,7 +19,7 @@ from ray.tune.tune import run_experiments
 
 
 def _register_all():
-    from .algorithms.registry import ALGORITHMS, _get_algorithm_class
+    from fedlib.algorithms.registry import ALGORITHMS, _get_algorithm_class
 
     for key, get_trainable_class_and_config in ALGORITHMS.items():
         register_trainable(key, get_trainable_class_and_config()[0])

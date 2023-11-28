@@ -11,7 +11,7 @@ from fedlib.clients import ClientConfig
 from fedlib.constants import CLIENT_UPDATE, NUM_GLOBAL_STEPS
 from fedlib.core import WorkerGroupConfig, WorkerGroup, ClientWorkerGroup
 from fedlib.datasets import FLDataset, DatasetCatalog
-from fedlib.types import PartialAlgorithmConfigDict
+from fedlib.utils.types import PartialAlgorithmConfigDict
 
 
 class FedavgConfig(AlgorithmConfig):

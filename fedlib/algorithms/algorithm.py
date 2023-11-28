@@ -12,7 +12,7 @@ from ray.util.annotations import PublicAPI
 from fedlib.algorithms.algorithm_config import AlgorithmConfig
 from fedlib.algorithms.callbacks import AlgorithmCallbackList
 from fedlib.algorithms.client_manager import ClientManager
-from fedlib.types import ResultDict, PartialAlgorithmConfigDict
+from fedlib.utils.types import ResultDict, PartialAlgorithmConfigDict
 
 
 class Algorithm(Trainable):
