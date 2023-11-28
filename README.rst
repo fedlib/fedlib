@@ -55,15 +55,6 @@ Installation
 
 **Blades** internally calls `ray.tune <https://docs.ray.io/en/latest/tune/tutorials/tune-output.html>`_; therefore, the experimental results are output to its default directory: ``~/ray_results``.
 
-Experiment Results
-==================================================
-
-.. image:: https://github.com/lishenghui/blades/raw/master/docs/source/images/fashion_mnist.png
-
-.. image:: https://github.com/lishenghui/blades/raw/master/docs/source/images/cifar10.png
-
-
-
 
 Cluster Deployment
 ===================
