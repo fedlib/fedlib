@@ -24,8 +24,8 @@ class ToyFLDataset(FLDataset):
 
     def __init__(self) -> None:
         toy_train_set = _ToyDataset()
-        splitter = IIDPartitioner(num_clients=self.num_clients)
-        client_datasets = splitter.generate_client_datasets(
+        partitioner = IIDPartitioner(num_clients=self.num_clients)
+        client_datasets = partitioner.generate_client_datasets(
             toy_train_set,
             toy_train_set,
             train_batch_size=1,

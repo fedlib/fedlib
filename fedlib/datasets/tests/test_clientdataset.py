@@ -59,7 +59,7 @@ class TestClientDataset(unittest.TestCase):
         # Check if all data points were iterated over
         all_data = torch.cat(all_batches)
         expected_data = torch.cat(self.dataset.data).view(-1, 1)[: len(all_data)]
-        torch.testing.assert_allclose(all_data, expected_data)
+        torch.testing.assert_close(all_data, expected_data)
 
     def test_pickle_dataset(self):
         # Pickle the client dataset

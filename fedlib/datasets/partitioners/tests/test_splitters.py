@@ -31,11 +31,11 @@ class TestDirichletSplitter(unittest.TestCase):
         # Create mock dataset
         dataset = MockDataset(dataset_size, num_classes)
 
-        # Initialize Dirichlet splitter
-        splitter = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
+        # Initialize Dirichlet partitioner
+        partitioner = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
 
-        # Split the dataset
-        subsets = splitter.split_dataset(dataset)
+        # Partition the dataset
+        subsets = partitioner.split_dataset(dataset)
 
         # Check that we have the correct number of subsets
         self.assertEqual(len(subsets), num_clients)
@@ -57,11 +57,11 @@ class TestDirichletSplitter(unittest.TestCase):
         # Create mock dataset
         dataset = MockDataset(dataset_size, num_classes)
 
-        # Initialize Dirichlet splitter
-        splitter = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
+        # Initialize Dirichlet partitioner
+        partitioner = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
 
-        # Split the dataset
-        subsets = splitter.split_dataset(dataset)
+        # Partition the dataset
+        subsets = partitioner.split_dataset(dataset)
 
         # Collect class distributions
         class_distributions = {i: [] for i in range(num_classes)}
@@ -114,13 +114,13 @@ class TestDirichletSplitter(unittest.TestCase):
         dataset = MockDataset(dataset_size, num_classes)
         dataset_test = MockDataset(dataset_size, num_classes)
 
-        # Initialize Dirichlet splitter
-        splitter = DirichletPartitioner(
+        # Initialize Dirichlet partitioner
+        partitioner = DirichletPartitioner(
             num_clients=num_clients, alpha=alpha, same_proportions=True
         )
 
-        # Split the dataset
-        subsets = splitter.split_datasets(dataset, dataset_test)[0]
+        # Partition the dataset
+        subsets = partitioner.split_datasets(dataset, dataset_test)[0]
 
         # Check that we have the correct number of subsets
         self.assertEqual(len(subsets), num_clients)

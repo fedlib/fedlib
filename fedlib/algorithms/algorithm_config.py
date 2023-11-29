@@ -350,7 +350,7 @@ class AlgorithmConfig:
             if self.dataset_config.get("random_seed", None) is None:
                 self.dataset_config["random_seed"] = self.random_seed
             self.partitioner_config["random_seed"] = self.dataset_config["random_seed"]
-            self.dataset_config["partitioner_config"] = self.partitioner_config
+            self.dataset_config["partitioner_config"].update(self.partitioner_config)
         if self.dataset_config.get("random_seed", None) is None:
             self.dataset_config["random_seed"] = self.random_seed
 

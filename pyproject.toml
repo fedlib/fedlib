@@ -23,7 +23,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.9"
 torch = "^2.0.1"
-torchvision = "~0.15.2"
+torchvision = "^0.15.2"
 torchaudio = "*"
 numpy = "^1.26.1"
 ray = { version = "^2.7.0", extras = ["rllib", "tune"] }
@@ -44,7 +44,6 @@ yapf = "*"
 isort = "*"
 codespell = "*"
 black = "*"
-pytest = "*"
 pylint = "*"
 pytest-xdist = "*"
 

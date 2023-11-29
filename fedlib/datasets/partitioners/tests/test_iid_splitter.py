@@ -28,11 +28,11 @@ class TestIIDSplitter(unittest.TestCase):
         # Create mock dataset
         dataset = MockDataset(dataset_size)
 
-        # Initialize IID splitter
-        splitter = IIDPartitioner(num_clients=num_clients)
+        # Initialize IID partitioner
+        partitioner = IIDPartitioner(num_clients=num_clients)
 
-        # Split the dataset
-        subsets = splitter.split_dataset(dataset)
+        # Partition the dataset
+        subsets = partitioner.split_dataset(dataset)
 
         # Check that we have the correct number of subsets
         self.assertEqual(len(subsets), num_clients)
@@ -53,11 +53,13 @@ class TestIIDSplitter(unittest.TestCase):
         train_dataset = MockDataset(dataset_size)
         test_dataset = MockDataset(dataset_size)
 
-        # Initialize IID splitter
-        splitter = IIDPartitioner(num_clients=num_clients)
+        # Initialize IID partitioner
+        partitioner = IIDPartitioner(num_clients=num_clients)
 
-        # Split the datasets
-        paired_subsets = splitter.generate_paired_subsets(train_dataset, test_dataset)
+        # Partition the datasets
+        paired_subsets = partitioner.generate_paired_subsets(
+            train_dataset, test_dataset
+        )
         # Check that we have the correct number of paired subsets
         self.assertEqual(len(paired_subsets), num_clients)
 
