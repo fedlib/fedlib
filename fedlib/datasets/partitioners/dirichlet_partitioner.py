@@ -36,7 +36,6 @@ class DirichletPartitioner(DatasetPartitioner):
             )
         else:
             test_subsets, _ = self._split_single_dataset(test_dataset)
-
         return train_subsets, test_subsets
 
     def _split_single_dataset(self, dataset: Dataset, class_proportions=None):

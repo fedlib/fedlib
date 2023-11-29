@@ -46,6 +46,7 @@ class ClientDataset:
             return 0
         return len(self._test_set)
 
+    # TODO: Fix shuffle random seed for reproducibility
     def _create_train_loader(self):
         # Creates a new DataLoader for training when called
         self.train_loader = iter(
@@ -53,6 +54,7 @@ class ClientDataset:
                 self._train_set,
                 batch_size=self.train_batch_size,
                 num_workers=self.num_workers,
+                # shuffle=True,
             )
         )
 
@@ -62,6 +64,7 @@ class ClientDataset:
             self._test_set,
             batch_size=self.test_batch_size,
             num_workers=self.num_workers,
+            # shuffle=True,
         )
         # )
 

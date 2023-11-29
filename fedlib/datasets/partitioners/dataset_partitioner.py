@@ -1,3 +1,4 @@
+import random
 import itertools
 from abc import ABC, abstractmethod
 from typing import List, Any, Callable, Iterator, Dict, Tuple
@@ -86,11 +87,17 @@ class DatasetPartitioner(ABC):
         client_datasets = []
         paired_subsets = self.generate_paired_subsets(train_dataset, test_dataset)
         for client_id, (train_subset, test_subset) in paired_subsets.items():
+            train_indices = train_subset.indices
+            test_indices = test_subset.indices
+            random.shuffle(train_indices)
+            random.shuffle(test_indices)
+            shuffled_train_subset = Subset(train_dataset, train_indices)
+            shuffled_test_subset = Subset(test_dataset, test_indices)
             client_datasets.append(
                 ClientDataset(
                     uid=client_id,
-                    train_set=train_subset,
-                    test_set=test_subset,
+                    train_set=shuffled_train_subset,
+                    test_set=shuffled_test_subset,
                     **kwargs,
                 )
             )

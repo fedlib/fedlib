@@ -15,15 +15,15 @@ fedavg_blades:
 
       partitioner_config:
         type: DirichletPartitioner
-        alpha: 
-          grid_search: [0.1]
+        alpha:
+          grid_search: [0.1, 100]
         num_clients: 60
 
     evaluation_interval: 50
 
-    num_remote_workers: 2
+    num_remote_workers: 0
     num_gpus_per_worker: 0.5
-    num_cpus_per_worker: 2
+    num_cpus_per_worker: 0
     num_cpus_for_driver: 4
     num_gpus_for_driver: 0.5
 
@@ -46,9 +46,9 @@ fedavg_blades:
           grid_search: [0.0]
 
     server_config:
-      aggregator: 
+      aggregator:
         type: Mean
-        
+
       optimizer:
         type: SGD
         lr: 1.0
