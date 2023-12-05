@@ -12,7 +12,7 @@ from ray.util import log_once
 from fedlib.algorithms.callbacks import AlgorithmCallback
 from fedlib.algorithms.server_config import ServerConfig
 from fedlib.clients import ClientConfig
-from fedlib.constants import fedlib_DATASET
+from fedlib.constants import FEDLIB_DATASET
 from fedlib.core.execution.worker import Worker
 from fedlib.core.execution.worker_group_config import WorkerGroupConfig
 from fedlib.tasks import TaskSpec
@@ -328,7 +328,7 @@ class AlgorithmConfig:
         # Check that the `num_clients` is set correctly.
         if self.dataset_config.get("custom_dataset"):
             dataset_cls = _global_registry.get(
-                fedlib_DATASET, self.dataset_config["custom_dataset"]
+                FEDLIB_DATASET, self.dataset_config["custom_dataset"]
             )
             self.num_clients = dataset_cls.num_clients
         else:
