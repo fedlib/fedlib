@@ -55,11 +55,21 @@ class TestFedavg(unittest.TestCase):
                 loss = F.cross_entropy(output, target)
                 loss.backward()
                 opt.step()
-                break
 
             self.alg.training_step()
             updated_model = copy.deepcopy(self.alg.server.get_global_model())
             self.assertTrue(torch.allclose(model.weight, updated_model.weight))
+
+    def test_evaluate(self):
+        train_loader = self.alg._dataset.server_dataset
+        data, target = train_loader.get_next_train_batch()
+
+        self.alg.training_step()
+        task = self.alg.server.task
+        task.init_optimizer()
+        task.train_one_batch(data, target)
+        result = self.alg.evaluate()
+        self.assertIsNotNone(result)
 
 
 if __name__ == "__main__":

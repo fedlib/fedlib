@@ -38,6 +38,6 @@ CLIENT_UPDATE = "client_update"
 # Map fedlib categories to rllib categories supported by Tune.
 # This is a temporary solution as we cannot add new categories to Tune so far.
 # https://github.com/ray-project/ray/blob/5568b6142f0e6eb60165265e5415fda6342eb15f/python/ray/tune/registry.py#L26
-fedlib_MODEL = RLLIB_MODEL
-fedlib_ALGORITHM = TRAINABLE_CLASS
-fedlib_DATASET = RLLIB_ACTION_DIST
+FEDLIB_MODEL = RLLIB_MODEL
+FEDLIB_ALGORITHM = TRAINABLE_CLASS
+FEDLIB_DATASET = RLLIB_ACTION_DIST

@@ -6,13 +6,13 @@ from ray.rllib.utils.annotations import PublicAPI
 from ray.rllib.utils.from_config import from_config
 from ray.tune.registry import _global_registry
 
-from fedlib.constants import fedlib_DATASET
+from fedlib.constants import FEDLIB_DATASET
 from fedlib.datasets.partitioners import IIDPartitioner
 from fedlib.utils.types import DatasetConfigDict
 from .dataset import FLDataset
 from .ucihar import UCIHAR
 
-_fedlib_DATASETS = ["UCIHAR"]
+_FEDLIB_DATASETS = ["UCIHAR"]
 
 
 CIFAR10_stats = {
@@ -105,8 +105,8 @@ class DatasetCatalog:
         partitioner_config = dataset_config.pop("partitioner_config", {})
         train_batch_size = dataset_config.pop("train_batch_size", 32)
         test_batch_size = dataset_config.pop("test_batch_size", 32)
-        splitter = from_config(IIDPartitioner, partitioner_config)
-        subsets = splitter.generate_client_datasets(
+        partitioner = from_config(IIDPartitioner, partitioner_config)
+        subsets = partitioner.generate_client_datasets(
             train_set,
             test_set,
             train_batch_size=train_batch_size,
@@ -139,12 +139,12 @@ class DatasetCatalog:
                 )
             else:
                 dataset_cls = _global_registry.get(
-                    fedlib_DATASET, dataset_config["custom_dataset"]
+                    FEDLIB_DATASET, dataset_config["custom_dataset"]
                 )
 
             dataset = dataset_cls(**customized_dataset_kwargs)
             return dataset
-        if dataset_config.get("type", None) in _fedlib_DATASETS:
+        if dataset_config.get("type", None) in _FEDLIB_DATASETS:
             if dataset_config.get("type", None) == "UCIHAR":
                 dataset = UCIHAR(**dataset_kwargs)
                 return dataset
@@ -163,4 +163,4 @@ class DatasetCatalog:
             dataset_name: Name to register the model under.
             dataset_class: Python class of the dataset.
         """
-        _global_registry.register(fedlib_DATASET, dataset_name, dataset_class)
+        _global_registry.register(FEDLIB_DATASET, dataset_name, dataset_class)

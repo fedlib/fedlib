@@ -3,7 +3,7 @@ import unittest
 import torch
 from torch.utils.data import Dataset
 
-# Assuming IIDSplitter is defined in the fedlib.datasets.partitioners module
+# Assuming IIDPartitioner is defined in the fedlib.datasets.partitioners module
 from fedlib.datasets.partitioners import IIDPartitioner
 
 
@@ -20,7 +20,7 @@ class MockDataset(Dataset):
         return self.data[idx]
 
 
-class TestIIDSplitter(unittest.TestCase):
+class TestIIDPartitioner(unittest.TestCase):
     def test_split_dataset(self):
         dataset_size = 100
         num_clients = 7

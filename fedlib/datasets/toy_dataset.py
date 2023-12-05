@@ -31,4 +31,4 @@ class ToyFLDataset(FLDataset):
             train_batch_size=1,
             test_batch_size=1,
         )
-        super().__init__(client_datasets)
+        super().__init__(client_datasets, client_datasets[0])

@@ -150,6 +150,7 @@ class Task:
 
     def evaluate(self, test_loader):
         if self._metrics is None:
+            # breakpoint()
             self._metrics = self.init_metrics()
         device = next(self._model.parameters()).device
         self._metrics.to(device)
@@ -165,6 +166,19 @@ class Task:
                 self._metrics(output, target)
         result.update(self._metrics.compute())
         return result
+
+    @DeveloperAPI
+    @OverrideToImplementCustomLogic
+    def compile_eval_results(self, results: List) -> dict:
+        """Compiles the results of the evaluation.
+
+        Args:
+            results: The evaluation results.
+
+        Returns:
+            The compiled results.
+        """
+        raise NotImplementedError
 
     @DeveloperAPI
     @OverrideToImplementCustomLogic

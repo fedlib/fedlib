@@ -21,7 +21,7 @@ class MockDataset(Dataset):
         return self.targets[idx]
 
 
-class TestDirichletSplitter(unittest.TestCase):
+class TestDirichletPartitioner(unittest.TestCase):
     def test_split(self):
         dataset_size = 100
         num_classes = 10
@@ -86,8 +86,8 @@ class TestDirichletSplitter(unittest.TestCase):
         prev_std_devs = np.inf
         for alpha in alphas:
             dataset = MockDataset(dataset_size, num_classes)
-            splitter = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
-            subsets = splitter.split_dataset(dataset)
+            partitioner = DirichletPartitioner(num_clients=num_clients, alpha=alpha)
+            subsets = partitioner.split_dataset(dataset)
 
             # Calculate the distribution of each class for each client
             class_distributions = {i: [] for i in range(num_classes)}

@@ -10,7 +10,7 @@ from fedlib.algorithms import Algorithm, AlgorithmConfig
 from fedlib.clients import ClientConfig
 from fedlib.constants import CLIENT_UPDATE, NUM_GLOBAL_STEPS
 from fedlib.core import WorkerGroupConfig, WorkerGroup, ClientWorkerGroup
-from fedlib.datasets import FLDataset, DatasetCatalog
+from fedlib.datasets import DatasetCatalog
 from fedlib.utils.types import PartialAlgorithmConfigDict
 
 
@@ -48,28 +48,6 @@ class FedavgConfig(AlgorithmConfig):
     @override(AlgorithmConfig)
     def validate(self) -> None:
         super().validate()
-
-        # This condition is only for DnC and Trimmedmean aggregators.
-        if (
-            self.server_config.get("aggregator", None) is not None
-            and self.server_config.get("aggregator").get("type") is not None
-            # and "num_byzantine" not in self.server_config["aggregator"]["type"]
-            and (
-                "DnC" == self.server_config["aggregator"]["type"]
-                or "Trimmedmean" in self.server_config["aggregator"]["type"]
-                or "Multikrum" in self.server_config["aggregator"]["type"]
-            )
-        ):
-            self.server_config["aggregator"][
-                "num_byzantine"
-            ] = self.num_malicious_clients
-
-        # Check whether the number of malicious clients makes sense.
-        if self.num_malicious_clients > self.num_clients:
-            raise ValueError(
-                "`num_malicious_clients` must be smaller than or equal "
-                "`num_clients`! Simulation makes no sense otherwise."
-            )
 
 
 class Fedavg(Algorithm):
@@ -117,6 +95,7 @@ class Fedavg(Algorithm):
         self.global_vars = defaultdict(lambda: defaultdict(list))
 
         clients = self.client_manager.clients
+
         self.local_results = self.worker_group.foreach_execution(
             lambda _, client: client.setup(), clients
         )
@@ -134,10 +113,7 @@ class Fedavg(Algorithm):
         self.worker_group.sync_weights(self.server.get_global_model().state_dict())
 
         def local_training(worker, client):
-            if isinstance(worker.dataset, FLDataset):
-                dataset = worker.dataset.get_client_dataset(client.client_id)
-            else:
-                dataset = worker.dataset.get_train_loader(client.client_id)
+            dataset = worker.dataset.get_client_dataset(client.client_id)
             return client.train_one_round(dataset)
 
         clients = self.client_manager.trainable_clients
@@ -167,27 +143,12 @@ class Fedavg(Algorithm):
         clients = self.client_manager.testable_clients
 
         def validate_func(worker, client):
-            # test_loader = worker.dataset.get_test_loader(client.client_id)
-            if isinstance(worker.dataset, FLDataset):
-                test_loader = worker.dataset.get_client_dataset(
-                    client.client_id
-                ).get_test_loader()
-            else:
-                test_loader = worker.dataset.get_test_loader(client.client_id)
+            client_dataset = worker.dataset.get_client_dataset(client.client_id)
+            test_loader = client_dataset.get_test_loader()
             return client.evaluate(test_loader)
 
         evaluate_results = self.worker_group.foreach_execution(validate_func, clients)
-
-        results = {
-            "ce_loss": np.average(
-                [metric["ce_loss"] for metric in evaluate_results],
-                weights=[metric["length"] for metric in evaluate_results],
-            ),
-            "acc_top_1": np.average(
-                [metric["acc_top_1"].cpu() for metric in evaluate_results],
-                weights=[metric["length"] for metric in evaluate_results],
-            ),
-        }
+        results = self.server.task.compile_eval_results(evaluate_results)
 
         return results
 

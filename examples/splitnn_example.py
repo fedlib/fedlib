@@ -24,7 +24,7 @@ from fedlib.core import WorkerGroupConfig
 from fedlib.core.execution.session import get_session
 from fedlib.core.execution.worker import Worker
 from fedlib.datasets import FLDataset
-from fedlib.tasks import GeneralClassification, TaskSpec
+from fedlib.tasks import Classifier, TaskSpec
 
 
 class SplitClient(Client):
@@ -59,7 +59,7 @@ class MLPHeaD(nn.Module):
         return x
 
 
-class SplitClassificationServer(GeneralClassification):
+class SplitClassificationServer(Classifier):
     def make_model(self) -> torch.nn.Module:
         return MLPHeaD()
 
@@ -91,7 +91,7 @@ class SplitServer(Server):
         return {"smached_grads": smashed_grads, "loss": mean(losses)}
 
 
-class SplitClassificationClient(GeneralClassification):
+class SplitClassificationClient(Classifier):
     def make_model(self) -> torch.nn.Module:
         class MLPClient(nn.Module):
             def __init__(self):

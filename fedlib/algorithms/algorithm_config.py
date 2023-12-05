@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Callable, Optional, Type, Union
+from typing import Callable, Optional, Union
 
 from ray.tune.logger import Logger
 from ray.tune.registry import _global_registry
@@ -12,7 +12,7 @@ from ray.util import log_once
 from fedlib.algorithms.callbacks import AlgorithmCallback
 from fedlib.algorithms.server_config import ServerConfig
 from fedlib.clients import ClientConfig
-from fedlib.constants import fedlib_DATASET
+from fedlib.constants import FEDLIB_DATASET
 from fedlib.core.execution.worker import Worker
 from fedlib.core.execution.worker_group_config import WorkerGroupConfig
 from fedlib.tasks import TaskSpec
@@ -68,7 +68,7 @@ class AlgorithmConfig:
         self.server_config = {}
         self.logger_creator = None
         self.learner_class = None
-        self.task_config = {"task_class": "fedlib.tasks.GeneralClassification"}
+        self.task_config = {"task_class": "fedlib.tasks.Classifier"}
 
         # experimental: this will contain the hyper-parameters that are passed to the
         # Learner, for computing loss, etc. New algorithms have to set this to their
@@ -237,17 +237,17 @@ class AlgorithmConfig:
         )
         return config
 
-    def get_default_worker_class(self) -> Union[Type["Worker"], str]:
-        """Returns the Learner class to use for this algorithm.
+    # def get_default_worker_class(self) -> Union[Type["Worker"], str]:
+    #     """Returns the Learner class to use for this algorithm.
 
-        Override this method in the sub-class to return the Learner class type given
-        the input framework.
+    #     Override this method in the sub-class to return the Learner class type given
+    #     the input framework.
 
-        Returns:
-            The Learner class to use for this algorithm either as a class type or as
-            a string (e.g. ray.rllib.core.learner.testing.torch.BCTrainer).
-        """
-        raise NotImplementedError
+    #     Returns:
+    #         The Learner class to use for this algorithm either as a class type or as
+    #         a string (e.g. ray.rllib.core.learner.testing.torch.BCTrainer).
+    #     """
+    #     raise NotImplementedError
 
     def build(
         self,
@@ -328,7 +328,7 @@ class AlgorithmConfig:
         # Check that the `num_clients` is set correctly.
         if self.dataset_config.get("custom_dataset"):
             dataset_cls = _global_registry.get(
-                fedlib_DATASET, self.dataset_config["custom_dataset"]
+                FEDLIB_DATASET, self.dataset_config["custom_dataset"]
             )
             self.num_clients = dataset_cls.num_clients
         else:

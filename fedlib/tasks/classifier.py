@@ -2,6 +2,7 @@ from functools import partial
 
 import torch
 import torch.nn.functional as F
+import numpy as np
 import torchmetrics
 from torchmetrics import MetricCollection, Metric
 
@@ -28,7 +29,7 @@ class CustomCrossEntropy(Metric):
         return ce_loss.item()
 
 
-class GeneralClassification(Task):
+class Classifier(Task):
     _num_classes = None
 
     @staticmethod
@@ -42,19 +43,19 @@ class GeneralClassification(Task):
         data, target = data.to(device), target.to(device)
         output = model(data)
 
-        if GeneralClassification._num_classes is None:
-            GeneralClassification._num_classes = output.shape[1]
+        if Classifier._num_classes is None:
+            Classifier._num_classes = output.shape[1]
         loss = F.cross_entropy(output, target)
         return torch.clamp(loss, 0, 1e6)
 
     @property
     def num_classes(self):
-        if GeneralClassification._num_classes is None:
+        if Classifier._num_classes is None:
             raise ValueError(
                 "The number of classes is not defined yet, you may need to run a"
                 " forward pass first, so that the number of outputs is known."
             )
-        return GeneralClassification._num_classes
+        return Classifier._num_classes
 
     def init_metrics(self):
         # Define a base partial function with shared arguments
@@ -63,13 +64,25 @@ class GeneralClassification(Task):
                 "ce_loss": CustomCrossEntropy(),
             }
         )
-        if self._num_classes:
+        if self.num_classes:
             base_accuracy = partial(
                 torchmetrics.Accuracy,
                 task="multiclass",
-                num_classes=self._num_classes,
+                num_classes=self.num_classes,
                 distributed_available_fn=lambda: False,
             )
-            for k in range(1, self._num_classes, 2):
+            for k in range(1, self.num_classes, 2):
                 metrics[f"acc_top_{k}"] = partial(base_accuracy, top_k=k)()
         return metrics
+
+    def compile_eval_results(self, results):
+        return {
+            "ce_loss": np.average(
+                [metric["ce_loss"] for metric in results],
+                weights=[metric["length"] for metric in results],
+            ),
+            "acc_top_1": np.average(
+                [metric["acc_top_1"].cpu() for metric in results],
+                weights=[metric["length"] for metric in results],
+            ),
+        }

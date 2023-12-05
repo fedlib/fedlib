@@ -2,17 +2,19 @@ import random
 from typing import List
 
 from torch.utils.data import ConcatDataset
-
-from fedlib.datasets import clientdataset
+from fedlib.datasets.clientdataset import ClientDataset
 
 
 class FLDataset:
-    def __init__(self, client_datasets) -> None:
+    def __init__(
+        self, client_datasets: List["ClientDataset"], server_dataset=None
+    ) -> None:
         self.client_datasets = client_datasets
         # Create a dictionary to map client_id to ClientDataset for O(1) lookup
         self.client_datasets_dict = {
             client_dataset.uid: client_dataset for client_dataset in client_datasets
         }
+        self.server_dataset = server_dataset
 
     def __len__(self):
         return len(self.client_datasets)
@@ -86,7 +88,7 @@ class FLDataset:
         )
         return trainset, testset
 
-    def get_client_dataset(self, client_id: str) -> "clientdataset.ClientDataset":
+    def get_client_dataset(self, client_id: str) -> "ClientDataset":
         """Returns the ClientDataset instance corresponding to the specified
         client ID with O(1) complexity.
 

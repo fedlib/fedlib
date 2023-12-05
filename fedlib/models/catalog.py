@@ -3,7 +3,7 @@ from ray.rllib.utils.annotations import PublicAPI
 from ray.tune.registry import _global_registry
 from torch.nn import Module
 
-from fedlib.constants import fedlib_MODEL
+from fedlib.constants import FEDLIB_MODEL
 from fedlib.models.backbones.cctnets import cct_2_3x2_32
 from fedlib.models.cifar10.resnet_cifar import ResNet10
 from fedlib.models.fashionmnist.cnn import FashionCNN
@@ -30,7 +30,7 @@ class ModelCatalog:
         elif isinstance(model_config, Module):
             model = model_config
         elif model_config.get("custom_model"):
-            model_cls = _global_registry.get(fedlib_MODEL, model_config["custom_model"])
+            model_cls = _global_registry.get(FEDLIB_MODEL, model_config["custom_model"])
             model = model_cls()
         else:
             raise NotImplementedError
@@ -48,4 +48,4 @@ class ModelCatalog:
             model_name: Name to register the model under.
             model_class: Python class of the model.
         """
-        _global_registry.register(fedlib_MODEL, model_name, model_class)
+        _global_registry.register(FEDLIB_MODEL, model_name, model_class)

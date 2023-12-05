@@ -20,8 +20,8 @@ class DatasetPartitioner(ABC):
         random_seed: int = 123,
         client_id_generator: Callable[[], Iterator] = None,
     ):
-        """Initializes the dataset splitter with the number of clients and an
-        optional random seed.
+        """Initializes the dataset partitioner with the number of clients and
+        an optional random seed.
 
         Args:
             num_clients: The number of clients to split the data for.
@@ -73,7 +73,7 @@ class DatasetPartitioner(ABC):
 
     def generate_client_datasets(
         self, train_dataset: Dataset, test_dataset: Dataset, **kwargs
-    ):
+    ) -> List[ClientDataset]:
         """Generates client datasets from two datasets that may interact with
         each other.
 

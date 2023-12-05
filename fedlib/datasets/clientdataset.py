@@ -66,7 +66,6 @@ class ClientDataset:
             num_workers=self.num_workers,
             # shuffle=True,
         )
-        # )
 
     def get_next_train_batch(self):
         if self.train_loader is None:

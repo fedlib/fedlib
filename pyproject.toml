@@ -26,7 +26,7 @@ torch = "^2.0.1"
 torchvision = "^0.15.2"
 torchaudio = "*"
 numpy = "^1.26.1"
-ray = { version = "^2.7.0", extras = ["rllib", "tune"] }
+ray = { version = "^2.9.0", extras = ["rllib", "tune"] }
 matplotlib = "^3.8.1"
 requests = "^2.27.1"
 setuptools = "*"
@@ -35,18 +35,17 @@ wandb = "^0.15.12"
 typer = "*"
 dm_tree = "*"
 scikit-learn = "^1.3.2"
-pytest = "*"
-pre-commit = "*"
 torchmetrics = "*"
 
-[tool.poetry.dev-dependencies]
+# [tool.poetry.dev-dependencies]
+pytest-xdist = "*"
+pre-commit = "*"
 yapf = "*"
 isort = "*"
 codespell = "*"
 black = "*"
 pylint = "*"
-pytest-xdist = "*"
-
+pytest = "*"
 #[tool.poetry.scripts]
 #blades = "blades.train:main"
 

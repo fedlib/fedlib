@@ -1,4 +1,4 @@
-from .general_classification import GeneralClassification
+from .classifier import Classifier
 from .task import Task, TaskSpec
 
-__all__ = ["Task", "TaskSpec", "GeneralClassification"]
+__all__ = ["Task", "TaskSpec", "Classifier"]
