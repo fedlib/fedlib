@@ -7,6 +7,9 @@ from .dataset_partitioner import DatasetPartitioner
 
 
 class ShardPartitioner(DatasetPartitioner):
+    """Partitioner that splits a dataset into shards and assigns shards to
+    clients."""
+
     def __init__(
         self,
         num_clients: int,
@@ -51,7 +54,7 @@ class ShardPartitioner(DatasetPartitioner):
             client_idx = np.argmin([len(indices) for indices in client_data_indices])
             client_data_indices[client_idx].extend(shard_indices)
 
-        # Create client datasets
+        # Create client keyconcepts
         client_datasets = [
             Subset(dataset, subset_indices) for subset_indices in client_data_indices
         ]
@@ -66,7 +69,8 @@ class ShardPartitioner(DatasetPartitioner):
     def split_datasets(
         self, train_dataset: Dataset, test_dataset: Dataset
     ) -> tuple[list[Subset], list[Subset]]:
-        # Use the split_dataset method to split both the training and testing datasets
+        # Use the split_dataset method to split both the
+        # training and testing keyconcepts
         train_subsets = self.split_dataset(train_dataset)
         test_subsets = self.split_dataset(test_dataset)
 

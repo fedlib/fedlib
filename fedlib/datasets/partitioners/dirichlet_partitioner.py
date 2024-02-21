@@ -7,6 +7,9 @@ from .dataset_partitioner import DatasetPartitioner
 
 
 class DirichletPartitioner(DatasetPartitioner):
+    """Partitioner that uses Dirichlet distribution to allocate samples to
+    clients."""
+
     def __init__(
         self,
         num_clients: int = 4,

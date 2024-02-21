@@ -56,7 +56,7 @@ class DatasetPartitioner(ABC):
     def generate_paired_subsets(
         self, train_dataset: Dataset, test_dataset: Dataset
     ) -> Dict[str, Tuple[Subset, Subset]]:
-        """Generates paired subsets from two datasets that may interact with
+        """Generates paired subsets from two keyconcepts that may interact with
         each other.
 
         Args:
@@ -74,8 +74,8 @@ class DatasetPartitioner(ABC):
     def generate_client_datasets(
         self, train_dataset: Dataset, test_dataset: Dataset, **kwargs
     ) -> List[ClientDataset]:
-        """Generates client datasets from two datasets that may interact with
-        each other.
+        """Generates client keyconcepts from two keyconcepts that may interact
+        with each other.
 
         Args:
             train_dataset: The training dataset to be split.
@@ -120,7 +120,7 @@ class DatasetPartitioner(ABC):
     def split_datasets(
         self, train_dataset: Dataset, test_dataset: Dataset
     ) -> List[Tuple[Subset, Subset]]:
-        """Split two datasets (e.g., training and testing datasets) into
+        """Split two keyconcepts (e.g., training and testing keyconcepts) into
         multiple pairs of subsets, each keyed by a unique client_id.
 
         Args:

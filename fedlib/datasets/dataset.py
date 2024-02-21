@@ -57,10 +57,10 @@ class FLDataset:
         :param num_shards: Number of shards to create.
         :return: A list of FLDataset instances, each with a subset of the clients.
         """
-        # Shuffle client datasets to ensure randomness
+        # Shuffle client keyconcepts to ensure randomness
         random.shuffle(self.client_datasets)
 
-        # Split the client datasets into num_shards shards
+        # Split the client keyconcepts into num_shards shards
         shard_size = len(self.client_datasets) // num_shards
         remaining = len(self.client_datasets) % num_shards
         shards = []

@@ -7,13 +7,15 @@ from .dataset_partitioner import DatasetPartitioner
 
 
 class IIDPartitioner(DatasetPartitioner):
+    """Partitioner that splits a dataset into IID subsets."""
+
     def split_dataset(self, dataset: Dataset) -> List[Subset]:
         # Shuffle the dataset indices using PyTorch
         indices = torch.randperm(len(dataset)).tolist()
 
         # Calculate the size of each split, allowing for uneven splits
         split_size = len(dataset) // self.num_clients
-        # Calculate the number of datasets that will have an extra sample to account
+        # Calculate the number of keyconcepts that will have an extra sample to account
         # for remainders
         remainder = len(dataset) % self.num_clients
 
@@ -30,7 +32,8 @@ class IIDPartitioner(DatasetPartitioner):
     def split_datasets(
         self, train_dataset: Dataset, test_dataset: Dataset
     ) -> tuple[list[Subset], list[Subset]]:
-        # Use the split_dataset method to split both the training and testing datasets
+        # Use the split_dataset method to split both the
+        # training and testing keyconcepts
         train_subsets = self.split_dataset(train_dataset)
         test_subsets = self.split_dataset(test_dataset)
 

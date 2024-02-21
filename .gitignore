@@ -19,3 +19,4 @@
 *.DS_Store
 *.lock
 */.ipynb_checkpoints/
+docs/source/generated/*

@@ -1,8 +1,7 @@
-
 .. blades documentation master file, created by
-   sphinx-quickstart on Fri Nov 10 17:38:50 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+sphinx-quickstart on Fri Nov 10 17:38:50 2023.
+You can adapt this file completely to your liking, but it should at least
+contain the root `toctree` directive.
 
 :github_url: https://github.com/lishenghui/blades
 
@@ -22,6 +21,18 @@ and :ray:`null` `Ray <https://ray.io>`_ to study the state-of-the-art attacks an
    :caption: Install Blades
 
    install/installation
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Key Concepts
+
+   keyconcepts/keyconcepts
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Package Reference
+
+   modules/datasets
 
 .. toctree::
    :maxdepth: 2

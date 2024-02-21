@@ -3,12 +3,20 @@ import sys
 
 import blades_sphinx_theme
 
+import fedlib
+
+version = fedlib.__version__
+
 project = "blades"
 copyright = "2023, Shenghui Li"
 author = "Shenghui Li"
 release = "0.2"
 
 sys.path.append(osp.join(osp.dirname(blades_sphinx_theme.__file__), "extension"))
+
+templates_path = ["_templates"]
+add_module_names = False
+autodoc_member_order = "bysource"
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -46,10 +54,13 @@ intersphinx_mapping = {
     "torch": ("https://pytorch.org/docs/master", None),
 }
 
-# def setup(app):
-#     def rst_jinja_render(app, _, source):
-#         rst_context = {'torch_geometric': torch_geometric}
-#         source[0] = app.builder.templates.render_string(source[0], rst_context)
-#
-#     app.connect('source-read', rst_jinja_render)
-#     app.add_js_file('js/version_alert.js')
+
+def rst_jinja_render(app, _, source):
+    if hasattr(app.builder, "templates"):
+        rst_context = {"fedlib": fedlib}
+        source[0] = app.builder.templates.render_string(source[0], rst_context)
+
+
+def setup(app):
+    app.connect("source-read", rst_jinja_render)
+    app.add_js_file("js/version_alert.js")

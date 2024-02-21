@@ -3,7 +3,7 @@ import unittest
 import torch
 from torch.utils.data import Dataset
 
-# Assuming IIDPartitioner is defined in the fedlib.datasets.partitioners module
+# Assuming IIDPartitioner is defined in the fedlib.keyconcepts.partitioners module
 from fedlib.datasets.partitioners import IIDPartitioner
 
 
@@ -49,14 +49,14 @@ class TestIIDPartitioner(unittest.TestCase):
         dataset_size = 100
         num_clients = 5
 
-        # Create mock datasets for training and testing
+        # Create mock keyconcepts for training and testing
         train_dataset = MockDataset(dataset_size)
         test_dataset = MockDataset(dataset_size)
 
         # Initialize IID partitioner
         partitioner = IIDPartitioner(num_clients=num_clients)
 
-        # Partition the datasets
+        # Partition the keyconcepts
         paired_subsets = partitioner.generate_paired_subsets(
             train_dataset, test_dataset
         )
