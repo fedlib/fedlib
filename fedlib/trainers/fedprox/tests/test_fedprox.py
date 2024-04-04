@@ -6,19 +6,19 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
-from fedlib.algorithms.fedavg import FedavgConfig
+from fedlib.trainers.fedprox import FedProxTrainerConfig
 from fedlib.datasets import DatasetCatalog
 from fedlib.datasets import ToyFLDataset
 
 
-class TestFedavg(unittest.TestCase):
+class TestFedprox(unittest.TestCase):
     def setUp(self):
         DatasetCatalog.register_custom_dataset("simple", ToyFLDataset)
         model = torch.nn.Linear(2, 2)
 
         self.global_lr = 0.1
         self.alg = (
-            FedavgConfig()
+            FedProxTrainerConfig()
             .resources(num_remote_workers=2, num_gpus_per_worker=0)
             .data(
                 num_clients=1,

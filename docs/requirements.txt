@@ -1,3 +1,8 @@
 git+https://github.com/fedlib/blades_sphinx_theme.git
+lxml_html_clean
 nbsphinx
+nbsphinx-link
 numpy>=1.19.5
+sphinx
+sphinx_autodoc_typehints
+sphinx_gallery

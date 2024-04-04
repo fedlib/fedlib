@@ -1,28 +1,25 @@
 from typing import Callable, Dict, Optional, Union
 
-from ray.air.integrations.wandb import setup_wandb
-from ray.rllib.utils import force_list
-from ray.rllib.utils.from_config import from_config
-from ray.tune.execution.placement_groups import PlacementGroupFactory
 from ray.tune.logger import Logger
 from ray.tune.resources import Resources
 from ray.tune.trainable import Trainable
 from ray.util.annotations import PublicAPI
+from ray.air.integrations.wandb import setup_wandb
+from ray.tune.execution.placement_groups import PlacementGroupFactory
 
-from fedlib.algorithms.algorithm_config import AlgorithmConfig
-from fedlib.algorithms.callbacks import AlgorithmCallbackList
-from fedlib.algorithms.client_manager import ClientManager
+from fedlib.trainers.trainer_config import TrainerConfig
+from fedlib.trainers.client_manager import ClientManager
 from fedlib.utils.types import ResultDict, PartialAlgorithmConfigDict
 
 
-class Algorithm(Trainable):
+class Trainer(Trainable):
     """Base class for all FL Algorithms."""
 
     client_manager_cls = ClientManager
 
     def __init__(
         self,
-        config: Optional[AlgorithmConfig] = None,
+        config: Optional[TrainerConfig] = None,
         logger_creator: Optional[Callable[[], Logger]] = None,
         **kwargs,
     ):
@@ -37,7 +34,7 @@ class Algorithm(Trainable):
             # `self.get_default_config()` also returned a dict ->
             # Last resort: Create core AlgorithmConfig from merged dicts.
             if isinstance(default_config, dict):
-                config = AlgorithmConfig.from_dict(
+                config = TrainerConfig.from_dict(
                     config_dict=self.merge_trainer_configs(default_config, config, True)
                 )
             # Default config is an AlgorithmConfig -> update its properties
@@ -79,20 +76,16 @@ class Algorithm(Trainable):
                 "`self.training_iteration()` method into `self.training_step`."
             ) from err
 
-    def setup(self, config: AlgorithmConfig):
+    def setup(self, config: TrainerConfig):
         # Set up our config: Merge the user-supplied config dict (which could
         # be a partial config dict) with the class' default.
 
-        callback = from_config(config.pop("callbacks_config"))
-        self.callbacks = AlgorithmCallbackList(force_list(callback))
-        self.callbacks.setup(self)
-
-        if not isinstance(config, AlgorithmConfig):
+        if not isinstance(config, TrainerConfig):
             assert isinstance(config, PartialAlgorithmConfigDict)
             config_obj = self.get_default_config()
-            if not isinstance(config_obj, AlgorithmConfig):
+            if not isinstance(config_obj, TrainerConfig):
                 assert isinstance(config, PartialAlgorithmConfigDict)
-                config_obj = AlgorithmConfig().from_dict(config_obj)
+                config_obj = TrainerConfig().from_dict(config_obj)
             config_obj.update_from_dict(config)
             self.config = config_obj
         if config.get("wandb_api_key", False):
@@ -106,7 +99,9 @@ class Algorithm(Trainable):
                 project=config.get("wandb_project", None),
             )
 
-        self.callbacks.on_algorithm_init(algorithm=self)
+        self.callbacks = config.build_callbacks()
+        self.callbacks.setup(self)
+        self.callbacks.on_trainer_init(trainer=self)
 
     def step(self) -> ResultDict:
         # `self.iteration` gets incremented after this function returns,
@@ -134,9 +129,9 @@ class Algorithm(Trainable):
         return {}
 
     @classmethod
-    def get_default_config(cls) -> AlgorithmConfig:
+    def get_default_config(cls) -> TrainerConfig:
         """Returns the default config (AlgorithmConfig object)"""
-        return AlgorithmConfig()
+        return TrainerConfig()
 
     # @OverrideToImplementCustomLogic
     @classmethod

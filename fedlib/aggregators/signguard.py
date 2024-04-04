@@ -9,11 +9,8 @@ from .aggregators import Mean, Median
 
 
 class Signguard(object):
-    r"""A robust aggregator from paper `Xu et al.
-
-    SignGuard: Byzantine-robust Federated
-    Learning through Collaborative Malicious Gradient
-    Filtering <https://arxiv.org/abs/2109.05872>`_.
+    r"""A robust aggregator from paper `"SignGuard: Byzantine-robust Federated
+    Learning through Collaborative Malicious Gradient Filtering" <https://arxiv.org/abs/2109.05872>`_.
     """
 
     def __init__(self, agg="mean", max_tau=1e5, linkage="average") -> None:

@@ -15,9 +15,9 @@ from torch import Tensor
 from torch import nn
 from torch.autograd import Variable
 
-from fedlib.algorithms import AlgorithmConfig, Server
-from fedlib.algorithms.fedavg import FedavgConfig, Fedavg
-from fedlib.algorithms.server_config import ServerConfig
+from fedlib.trainers import TrainerConfig, Server
+from fedlib.trainers.fedavg import FedavgTrainerConfig, FedavgTrainer
+from fedlib.trainers.server_config import ServerConfig
 from fedlib.clients import Client, ClientConfig
 from fedlib.constants import NUM_GLOBAL_STEPS
 from fedlib.core import WorkerGroupConfig
@@ -38,7 +38,10 @@ class SplitClient(Client):
         data, target = data_reader.get_next_train_batch()
         data, target = self.callbacks.on_train_batch_begin(data, target)
         smashed_data = sess.task.train_one_batch(
-            data, target, self.callbacks.on_backward_end
+            data,
+            target,
+            self.callbacks.on_backward_begin,
+            self.callbacks.on_backward_end,
         )
         return {"smashed_data": smashed_data, "labels": target}
 
@@ -146,6 +149,7 @@ class SplitClassificationClient(Classifier):
         self,
         data: torch.Tensor,
         target: torch.Tensor,
+        on_backward_begin: Callable = None,
         on_backward_end: Callable = None,
     ):
         model = self.full_model.modelA
@@ -168,7 +172,7 @@ class SplitClassificationClient(Classifier):
             opt.step()
 
 
-class ExampleSplitnnConfig(FedavgConfig):
+class ExampleSplitnnConfig(FedavgTrainerConfig):
     def __init__(self, algo_class=None):
         """Initialize a FedavgConfig instance."""
         super().__init__(algo_class=algo_class or ExampleSplit)
@@ -184,12 +188,14 @@ class ExampleSplitnnConfig(FedavgConfig):
         if not self._is_frozen:
             raise ValueError(
                 "Cannot call `get_server_config()` on an unfrozen "
-                "AlgorithmConfig! Please call `freeze()` first."
+                "TrainerConfig! Please call `freeze()` first."
             )
 
         config = ServerConfig(
             class_specifier=SplitServer,
-            task_spec=TaskSpec(task_class=SplitClassificationServer, alg_config=self),
+            task_spec=TaskSpec(
+                task_class=SplitClassificationServer, trainer_config=self
+            ),
         ).update_from_dict(self.server_config)
         return config
 
@@ -217,16 +223,16 @@ class ExampleSplitnnConfig(FedavgConfig):
 
         config = super().get_worker_group_config()
         return config.task(
-            TaskSpec(task_class=SplitClassificationClient, alg_config=self)
+            TaskSpec(task_class=SplitClassificationClient, trainer_config=self)
         ).worker(worker_class=SplitNNWorker)
 
 
-class ExampleSplit(Fedavg):
+class ExampleSplit(FedavgTrainer):
     def __init__(self, config=None, logger_creator=None, **kwargs):
         super().__init__(config, logger_creator, **kwargs)
 
     @classmethod
-    def get_default_config(cls) -> AlgorithmConfig:
+    def get_default_config(cls) -> TrainerConfig:
         return ExampleSplitnnConfig()
 
     def training_step(self):

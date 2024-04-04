@@ -22,11 +22,15 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.extlinks",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "nbsphinx",
     "blades_sphinx",
+    "sphinx.ext.doctest",
+    # "sphinx_gallery.gen_gallery",
+    # "sphinx_gallery.load_style",
 ]
 
 templates_path = ["_templates"]

@@ -20,6 +20,7 @@ class ClientDataset:
         self.num_workers = num_workers
         self.train_loader = None  # DataLoader for training will be created when needed
         self.test_loader = None  # DataLoader for testing will be created when needed
+        self.train_iterator = None
 
     @property
     def uid(self):
@@ -49,14 +50,17 @@ class ClientDataset:
     # TODO: Fix shuffle random seed for reproducibility
     def _create_train_loader(self):
         # Creates a new DataLoader for training when called
-        self.train_loader = iter(
-            DataLoader(
-                self._train_set,
-                batch_size=self.train_batch_size,
-                num_workers=self.num_workers,
-                # shuffle=True,
-            )
+        self.train_loader = DataLoader(
+            self._train_set,
+            batch_size=self.train_batch_size,
+            num_workers=self.num_workers,
+            # shuffle=True,
         )
+
+    def _create_train_iterator(self):
+        if self.train_loader is None:
+            self._create_train_loader()
+        self.train_iterator = iter(self.train_loader)
 
     def _create_test_loader(self):
         # Creates a new DataLoader for testing when called
@@ -68,16 +72,16 @@ class ClientDataset:
         )
 
     def get_next_train_batch(self):
-        if self.train_loader is None:
-            self._create_train_loader()
+        if self.train_iterator is None:
+            self._create_train_iterator()
 
         try:
             # Return the next train batch
-            return next(self.train_loader)
+            return next(self.train_iterator)
         except StopIteration:
             # Re-create the train DataLoader if the previous loader is exhausted
-            self._create_train_loader()
-            return next(self.train_loader)
+            self._create_train_iterator()
+            return next(self.train_iterator)
 
     def get_train_loader(self):
         if self.train_loader is None:

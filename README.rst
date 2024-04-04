@@ -13,15 +13,15 @@
         :target: https://github.com/fedlib/fedlib
 
     .. image:: https://img.shields.io/github/actions/workflow/status/fedlib/fedlib/.github%2Fworkflows%2Funit-tests.yml?logo=Pytest&logoColor=hsl&label=Unit%20Testing
-       :alt: GitHub Workflow Status (with event)
+        :alt: GitHub Workflow Status (with event)
 
     .. image:: https://img.shields.io/badge/Pytorch-2.0-brightgreen?logo=pytorch&logoColor=red
-       :alt: Static Badge
-       :target: https://pytorch.org/get-started/pytorch-2.0/
+        :alt: Static Badge
+        :target: https://pytorch.org/get-started/pytorch-2.0/
 
-    .. image:: https://img.shields.io/badge/Ray-2.8-brightgreen?logo=ray&logoColor=blue
-       :alt: Static Badge
-       :target: https://docs.ray.io/en/releases-2.8.0/
+    .. image:: https://img.shields.io/badge/Ray-2.30-brightgreen?logo=ray&logoColor=blue
+        :alt: Static Badge
+        :target: https://docs.ray.io/en/releases-2.30.0/
 
     .. image:: https://readthedocs.org/projects/fedlib/badge/?version=latest
         :target: https://fedlib.readthedocs.io/en/latest/?badge=latest
@@ -88,9 +88,9 @@ Please cite our `paper <https://arxiv.org/abs/2206.05359>`_ (and the respective 
 
 ::
 
-   @article{li2023blades,
-     title={Blades: A Unified Benchmark Suite for Byzantine Attacks and Defenses in Federated Learning},
-     author= {Li, Shenghui and Ju, Li and Zhang, Tianru and Ngai, Edith and Voigt, Thiemo},
-     journal={arXiv preprint arXiv:2206.05359},
-     year={2023}
-   }
+    @article{li2023blades,
+        title={Blades: A Unified Benchmark Suite for Byzantine Attacks and Defenses in Federated Learning},
+        author= {Li, Shenghui and Ju, Li and Zhang, Tianru and Ngai, Edith and Voigt, Thiemo},
+        journal={arXiv preprint arXiv:2206.05359},
+        year={2023}
+    }

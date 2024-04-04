@@ -4,7 +4,7 @@ from .clippedclustering import Clippedclustering
 from .multikrum import Multikrum
 from .signguard import Signguard
 
-__all__ = [
+__all__ = classes = [
     "Mean",
     "Median",
     "Trimmedmean",

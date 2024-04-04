@@ -5,7 +5,7 @@ from ray.rllib.utils import force_list
 from ray.rllib.utils.from_config import from_config
 
 from fedlib.clients.callbacks import ClientCallbackList, ClientCallback
-from fedlib.constants import CLIENT_UPDATE
+from fedlib.constants import CLIENT_ID, CLIENT_UPDATE, TRAIN_LOSS
 from fedlib.core.execution.session import get_session
 from .client_config import ClientConfig
 
@@ -56,19 +56,22 @@ class Client:
             data, target = data_reader.get_next_train_batch()
             data, target = self.callbacks.on_train_batch_begin(data, target)
             loss = sess.task.train_one_batch(
-                data, target, self.callbacks.on_backward_end
+                data,
+                target,
+                self.callbacks.on_backward_begin,
+                self.callbacks.on_backward_end,
             )
             running_loss += loss
 
         pseudo_grad = sess.task.compute_psudo_grad()
         self.pseudo_grad_vec = torch.cat([t.view(-1) for t in pseudo_grad.values()])
 
-        avg_loss = running_loss / num_batches
+        train_loss = running_loss / num_batches
         self.callbacks.on_train_round_end()
 
         round_result = {
-            "id": self.client_id,
+            CLIENT_ID: self.client_id,
             CLIENT_UPDATE: self.pseudo_grad_vec,
-            "avg_loss": avg_loss,
+            TRAIN_LOSS: train_loss,
         }
         return round_result

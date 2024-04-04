@@ -17,16 +17,39 @@ def _median(inputs: List[torch.Tensor]):
 
 
 class Mean(object):
+    r"""Computes the ``sample mean`` over the updates from all give clients."""
+
     def __call__(self, inputs: List[torch.Tensor]):
         return _mean(inputs)
 
 
 class Median(object):
+    r"""A robust aggregator from paper `"Byzantine-robust distributed learning:
+    Towards optimal statistical rates" <https://proceedings.mlr.press/v80/yin18a>`_.
+
+    It computes the coordinate-wise median of the given set of clients
+    """
+
     def __call__(self, inputs: List[torch.Tensor]):
         return _median(inputs)
 
 
 class Trimmedmean(object):
+    r"""A robust aggregator from paper `"Byzantine-robust distributed learning:
+    Towards optimal statistical rates" <https://proceedings.mlr.press/v80/yin18a>`_
+
+    It computes the coordinate-wise trimmed average of the global_model updates,
+    which can be expressed by:
+
+    .. math::
+             trmean := TrimmedMean( \{ \Delta_k : k \in [K] \} ),
+
+    where the :math:`i`-th coordinate :math:`trmean_i = \frac{1}{(1-2\beta)m}
+    \sum_{x \in U_k}x`, and :math:`U_k`
+    is a subset obtained by removing the largest and smallest :math:`\beta` fraction
+    of its elements.
+    """
+
     def __init__(self, num_byzantine: int, *, filter_frac=1.0):
         if filter_frac > 1.0 or filter_frac < 0.0:
             raise ValueError(f"filter_frac should be in [0.0, 1.0], got {filter_frac}.")
@@ -58,6 +81,26 @@ class Trimmedmean(object):
 
 
 class GeoMed:
+    r"""A robust aggregator from paper `"Distributed Statistical Machine Learning
+    in Adversarial Settings: Byzantine Gradient Descent" <https://arxiv.org/abs/1705.05491>`_.
+    ``GeoMed`` aims to find a vector that minimizes the sum of its Euclidean distances
+    to all the update vectors:
+
+    .. math::
+        GeoMed := \arg\min_{\boldsymbol{z}}  \sum_{k \in [K]} \lVert \boldsymbol{z} -
+         {\Delta}_i \rVert.
+
+
+    There is no closed-form solution to the ``GeoMed`` problem. It is approximately
+    solved using Weiszfeld's algorithm in this implementation to.
+
+    :param maxiter: Maximum number of Weiszfeld iterations. Default 100
+    :param eps: Smallest allowed value of denominator, to avoid divide by zero.
+    Equivalently, this is a smoothing parameter. Default 1e-6.
+    :param ftol: If objective value does not improve by at least this `ftol` fraction,
+            terminate the algorithm, default 1e-10.
+    """
+
     def __init__(
         self,
         maxiter: Optional[int] = 100,
@@ -120,10 +163,8 @@ class GeoMed:
 
 
 class DnC(object):
-    r"""A robust aggregator from paper `Manipulating the Byzantine: Optimizing
-    Model Poisoning Attacks and Defenses for Federated Learning.
-
-    <https://par.nsf.gov/servlets/purl/10286354>`_.
+    r"""A robust aggregator from paper `"Manipulating the Byzantine: Optimizing
+    Model Poisoning Attacks and Defenses for Federated Learning" <https://par.nsf.gov/servlets/purl/10286354>`_.
     """
 
     def __init__(

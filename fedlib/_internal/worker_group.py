@@ -384,7 +384,7 @@ class WorkerGroup:
             func: The function to call for each worker (as only arg).
 
         Returns:
-             The list of return values of all calls to `func([worker])`.
+            The list of return values of all calls to `func([worker])`.
         """
         remote_results = ray.get(
             [w.actor.apply.remote(func) for w in self.remote_workers()]

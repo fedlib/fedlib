@@ -11,7 +11,7 @@ import typer
 import yaml
 from ray.rllib.common import CLIArguments as cli
 from ray.rllib.common import SupportedFileType
-from ray.rllib.common import download_example_file, get_file_type
+from ray.rllib.common import _download_example_file, _get_file_type
 from ray.tune.registry import register_trainable
 from ray.tune.resources import resources_to_json, json_to_resources
 from ray.tune.schedulers import create_scheduler
@@ -19,9 +19,9 @@ from ray.tune.tune import run_experiments
 
 
 def _register_all():
-    from fedlib.algorithms.registry import ALGORITHMS, _get_algorithm_class
+    from fedlib.trainers.registry import TRAINERS, _get_algorithm_class
 
-    for key, get_trainable_class_and_config in ALGORITHMS.items():
+    for key, get_trainable_class_and_config in TRAINERS.items():
         register_trainable(key, get_trainable_class_and_config()[0])
     for key in ["__fake", "__sigmoid_fake_data", "__parameter_tuning"]:
         register_trainable(key, _get_algorithm_class(key))
@@ -65,7 +65,7 @@ def load_experiments_from_file(
     """Load experiments from a file. Supports YAML and Python files.
 
     If you want to use a Python file, it has to have a 'config' variable
-    that is an AlgorithmConfig object and - optionally - a `stop` variable defining
+    that is an TrainerConfig object and - optionally - a `stop` variable defining
     the stop criteria.
 
     Args:
@@ -99,7 +99,7 @@ def load_experiments_from_file(
         if not hasattr(module, "config"):
             raise ValueError(
                 "Your Python file must contain a 'config' variable "
-                "that is an AlgorithmConfig object."
+                "that is an TrainerConfig object."
             )
         algo_config = getattr(module, "config")
         if stop is None:
@@ -168,7 +168,7 @@ def file(
       master/rllib/tuned_examples/ppo/cartpole-ppo.yaml
     """
     # Attempt to download the file if it's not found locally.
-    config_file, temp_file = download_example_file(
+    config_file, temp_file = _download_example_file(
         example_file=config_file, base_url=None
     )
 
@@ -179,7 +179,7 @@ def file(
         "checkpoint_score_attribute": checkpoint_score_attr,
     }
 
-    file_type = get_file_type(config_file)
+    file_type = _get_file_type(config_file)
 
     experiments = load_experiments_from_file(
         config_file, file_type, stop, checkpoint_config

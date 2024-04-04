@@ -1,42 +1,35 @@
 fedavg_blades:
   run: FEDAVG
   stop:
-    training_iteration: 100
+    training_iteration: 400
     # train_loss: 100
 
   config:
     random_seed:
+        # grid_search: [122, 123]
       grid_search: [111]
+      # grid_search: [111, 112, 123, 124, 125]
     dataset_config:
       type: CIFAR10
-      num_clients: 60
+      num_clients: 20
       num_classes: 10
       train_batch_size: 64
+      num_workers: 4
 
       partitioner_config:
         type: DirichletPartitioner
         alpha:
-          grid_search: [0.1, 100]
-        num_clients: 60
+          grid_search: [0.01, 0.05]
+        num_clients: 20
 
     evaluation_interval: 50
 
-    num_remote_workers: 0
-    num_gpus_per_worker: 0.5
-    num_cpus_per_worker: 0
+    num_remote_workers: 10
+    num_gpus_per_worker: 0.3
+    num_cpus_per_worker: 6
     num_cpus_for_driver: 4
     num_gpus_for_driver: 0.5
 
-    # num_remote_workers: 14
-    # num_gpus_per_worker: 0.25
-    # num_cpus_per_worker: 2
-    # num_cpus_for_driver: 2
-    # num_gpus_for_driver: 0.5
-
-    # num_clients: 2
-    # global_model:
-      # grid_search: [cct]
-    # global_model: cct
     global_model: resnet
 
     client_config:
@@ -47,7 +40,15 @@ fedavg_blades:
 
     server_config:
       aggregator:
-        type: Mean
+        grid_search: [
+          type: Mean,
+          # type: Median,
+          # type: GeoMed,
+          # type: DnC,
+          # type: Trimmedmean,
+          # type: Signguard,
+          # type: Clippedclustering,
+          ]
 
       optimizer:
         type: SGD
@@ -57,4 +58,4 @@ fedavg_blades:
         # lr_schedule: [[0, 0.1], [1500, 0.1],  [1501, 0.05], [3000, 0.05], [3001, 0.005], [4000, 0.005]]
         momentum:
           # grid_search: [0.0]
-          grid_search: [0.0]
+          grid_search: [0.9]

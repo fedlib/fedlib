@@ -104,7 +104,7 @@ class Server(LearningRateSchedule, _Base):
     ) -> ResultDict:
         self.update_global_model(local_updates)
         super().on_global_var_update(global_vars)
-        return {"server lr": [opt.param_groups[0]["lr"] for opt in self._optimizers]}
+        return {"server_lr": [opt.param_groups[0]["lr"] for opt in self._optimizers]}
 
     def update_global_model(self, local_updates: List[Tensor]) -> None:
         r"""Apply a step of global optimization.

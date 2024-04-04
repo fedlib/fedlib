@@ -10,9 +10,16 @@ from .aggregators import Mean, Median
 
 
 class Clippedclustering(object):
-    def __init__(self, agg="mean", max_tau=1e5, linkage="average") -> None:
-        super(Clippedclustering, self).__init__()
+    r"""A robust aggregator from paper `"An Experimental Study of Byzantine-Robust Aggregation Schemes in Federated Learning" <https://ieeexplore.ieee.org/abstract/document/10018261>`_.
+    It separates the client population into two groups based on the cosine similarities.
 
+    Args:
+        tau (float): threshold of clipping norm.
+                    If it is not given, updates are clipped according the median of
+                    historical norm.
+    """
+
+    def __init__(self, agg="mean", max_tau=1e5, linkage="average") -> None:
         assert linkage in ["average", "single"]
         self.tau = max_tau
         self.linkage = linkage

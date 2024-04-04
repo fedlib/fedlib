@@ -9,4 +9,27 @@ exclude =
 
 max-line-length = 88
 max-complexity = 100
-ignore = W293,W504,W503,E203
+ignore =
+    W293,
+    W504,
+    W503,
+    E203，
+    D200,  # 忽略一行docstring的长度限制
+    D201,  # 忽略docstring的缩进不一致
+    D202,  # 忽略多行docstring的第二行应为空行的规则
+    D203,  # 忽略一个docstring之后的行应为空行的规则
+    D204,  # 忽略一个类的docstring应在开始和结束行后空一行的规则
+    D205,  # 忽略一行docstring应是单句描述的规则
+    D400,  # 忽略docstring的首行应以大写字母开头的规则
+    D401,  # 忽略docstring应是命令式语句的规则
+    D213,  # 忽略多行docstring应以一行摘要开始的规则
+    D406,  # 忽略docstring的首行应以下划线后面的内容开始的规则
+    D407,  # 忽略docstring的结束行应在句号、问号或感叹号后面结束的规则
+    D408,  # 忽略docstring的末行应与内容行对齐的规则
+    D409,  # 忽略docstring的引号应成对匹配的规则
+    D411,  # 忽略一个类的docstring应在开始和结束行后空一行的规则
+    D412,  # 忽略一个类的docstring应在开始和结束行后空一行的规则
+    D413,  # 忽略一个类的docstring应在开始和结束行后空一行的规则
+    D414,  # 忽略一个类的docstring应在开始和结束行后空一行的规则
+    D416,  # 忽略一个类的docstring应在开始和结束行后空一行的规则
+    D417   # 忽略一个类的docstring应在开始和结束行后空一行的规则

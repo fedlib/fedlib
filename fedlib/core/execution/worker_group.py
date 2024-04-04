@@ -38,11 +38,14 @@ class WorkerGroup:
 
         if scaling_config.num_workers:
             backend_config = _get_backend_config(worker_class)
+            resources_per_worker = {
+                "CPU": scaling_config.num_cpus_per_worker,
+                "GPU": scaling_config.num_gpus_per_worker,
+            }
             backend_executor = BackendExecutor(
                 backend_config=backend_config,
                 num_workers=scaling_config.num_workers,
-                num_cpus_per_worker=scaling_config.num_cpus_per_worker,
-                num_gpus_per_worker=scaling_config.num_gpus_per_worker,
+                resources_per_worker=resources_per_worker,
                 max_retries=0,
             )
             backend_executor.start(
