@@ -20,3 +20,4 @@
 *.lock
 */.ipynb_checkpoints/
 docs/source/generated/*
+fedlib/sbatch.sh
