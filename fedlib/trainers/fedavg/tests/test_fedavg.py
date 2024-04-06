@@ -6,7 +6,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
-from fedlib.algorithms.fedavg import FedavgConfig
+from fedlib.trainers.fedavg import FedavgConfig
 from fedlib.datasets import DatasetCatalog
 from fedlib.datasets import ToyFLDataset
 

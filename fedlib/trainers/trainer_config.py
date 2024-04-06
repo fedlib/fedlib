@@ -9,27 +9,27 @@ from ray.tune.registry import get_trainable_cls
 # from ray.tune.result import TRIAL_INFO
 from ray.util import log_once
 
-from fedlib.algorithms.callbacks import AlgorithmCallback
-from fedlib.algorithms.server_config import ServerConfig
+from fedlib.trainers.callbacks import TrainerCallback
+from fedlib.trainers.server_config import ServerConfig
 from fedlib.clients import ClientConfig
 from fedlib.constants import FEDLIB_DATASET
 from fedlib.core.execution.worker import Worker
 from fedlib.core.execution.worker_group_config import WorkerGroupConfig
 from fedlib.tasks import TaskSpec
 from fedlib.utils.types import (
-    AlgorithmConfigDict,
-    PartialAlgorithmConfigDict,
+    TrainerConfigDict,
+    PartialTrainerConfigDict,
     TYPE_CHECKING,
     NotProvided,
 )
 
 if TYPE_CHECKING:
-    from fedlib.algorithms.algorithm import Algorithm
+    from fedlib.trainers.trainer import Trainer
 
 logger = logging.getLogger(__name__)
 
 
-class AlgorithmConfig:
+class TrainerConfig:
     """A Fedlib AlgorithmConfig builds a Fedlib Algorithm from a given
     configuration.
 
@@ -99,7 +99,7 @@ class AlgorithmConfig:
         self.evaluation_interval = 10
         self.evaluation_config = None
 
-        self.callbacks_config = AlgorithmCallback
+        self.callbacks_config = TrainerCallback
 
     def client(self, *, client_config: Optional[dict] = NotProvided):
         if client_config is not NotProvided:
@@ -160,7 +160,7 @@ class AlgorithmConfig:
             self.num_remote_workers = num_remote_workers
         return self
 
-    def callbacks(self, callbacks_class) -> "AlgorithmConfig":
+    def callbacks(self, callbacks_class) -> "TrainerConfig":
         """Sets the callbacks configuration.
 
         Args:
@@ -173,7 +173,7 @@ class AlgorithmConfig:
             This updated AlgorithmConfig object.
         """
         if callbacks_class is None:
-            callbacks_class = AlgorithmCallback
+            callbacks_class = TrainerCallback
         # Check, whether given `callbacks` is a callable.
         if not callable(callbacks_class):
             raise ValueError(
@@ -185,7 +185,7 @@ class AlgorithmConfig:
         return self
 
     def get_task_spec(self) -> TaskSpec:
-        return TaskSpec(task_class=self.task_config["task_class"], alg_config=self)
+        return TaskSpec(task_class=self.task_config["task_class"], trainer_config=self)
 
     def get_client_config(self) -> ClientConfig:
         if not self._is_frozen:
@@ -213,7 +213,7 @@ class AlgorithmConfig:
             )
 
         config = ServerConfig(
-            class_specifier="fedlib.algorithms.Server",
+            class_specifier="fedlib.trainers.Server",
             task_spec=self.get_task_spec(),
         ).update_from_dict(self.server_config)
 
@@ -253,7 +253,7 @@ class AlgorithmConfig:
         self,
         logger_creator: Optional[Callable[[], Logger]] = None,
         use_copy: bool = True,
-    ) -> "Algorithm":
+    ) -> "Trainer":
         """Builds an Algorithm from the AlgorithmConfig.
 
         Args:
@@ -375,12 +375,12 @@ class AlgorithmConfig:
         #  of themselves? This way, users won't even be able to alter those values
         #  directly anymore.
 
-    def to_dict(self) -> AlgorithmConfigDict:
+    def to_dict(self) -> TrainerConfigDict:
         """Converts all settings into a legacy config dict for backward
         compatibility.
 
         Returns:
-            A complete AlgorithmConfigDict, usable in backward-compatible Tune/RLlib
+            A complete TrainerConfigDict, usable in backward-compatible Tune/RLlib
             use cases, e.g. w/ `tune.Tuner().fit()`.
         """
         config = copy.deepcopy(vars(self))
@@ -438,8 +438,8 @@ class AlgorithmConfig:
 
     def update_from_dict(
         self,
-        config_dict: PartialAlgorithmConfigDict,
-    ) -> "AlgorithmConfig":
+        config_dict: PartialTrainerConfigDict,
+    ) -> "TrainerConfig":
         """Modifies this AlgorithmConfig via the provided python config dict.
 
         Warns if `config_dict` contains deprecated keys.
@@ -449,7 +449,7 @@ class AlgorithmConfig:
         `ray.rllib.examples.policy.random_policy::RandomPolicy`.
 
         Args:
-            config_dict: The old-style python config dict (PartialAlgorithmConfigDict)
+            config_dict: The old-style python config dict (PartialTrainerConfigDict)
                 to use for overriding some properties defined in there.
 
         Returns:
@@ -495,9 +495,9 @@ class AlgorithmConfig:
         *,
         evaluation_interval: Optional[int] = NotProvided,
         evaluation_config: Optional[
-            Union["AlgorithmConfig", PartialAlgorithmConfigDict]
+            Union["TrainerConfig", PartialTrainerConfigDict]
         ] = NotProvided,
-    ) -> "AlgorithmConfig":
+    ) -> "TrainerConfig":
         """Configures evaluation settings."""
         if evaluation_interval is not NotProvided:
             self.evaluation_interval = evaluation_interval

@@ -1,9 +1,9 @@
 import ray
-from fedlib.algorithms.fedavg import FedavgConfig, Fedavg
+from fedlib.trainers.fedavg import FedavgConfig, Fedavg
 from ray import tune
 from ray.tune.stopper import MaximumIterationStopper
 
-from fedlib.algorithms import AlgorithmConfig
+from fedlib.trainers import TrainerConfig
 
 
 class ExampleFedavgConfig(FedavgConfig):
@@ -24,7 +24,7 @@ class ExampleFedavg(Fedavg):
         super().__init__(config, logger_creator, **kwargs)
 
     @classmethod
-    def get_default_config(cls) -> AlgorithmConfig:
+    def get_default_config(cls) -> TrainerConfig:
         return ExampleFedavgConfig()
 
 

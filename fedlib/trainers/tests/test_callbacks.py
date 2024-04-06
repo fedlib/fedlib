@@ -3,13 +3,13 @@ import unittest
 import ray
 import torch
 
-from fedlib.algorithms import AlgorithmCallback
-from fedlib.algorithms.fedavg import FedavgConfig
+from fedlib.trainers import TrainerCallback
+from fedlib.trainers.fedavg import FedavgConfig
 from fedlib.datasets import DatasetCatalog, ToyFLDataset
 
 
-class InitCallbacks(AlgorithmCallback):
-    def on_algorithm_init(self, *, algorithm, **kwargs):
+class InitCallbacks(TrainerCallback):
+    def on_trainer_init(self, *, trainer, **kwargs):
         self._on_init_was_called = True
 
 
@@ -23,7 +23,7 @@ class TestCallbacks(unittest.TestCase):
     def tearDownClass(cls):
         ray.shutdown()
 
-    def test_on_algorithm_init(self):
+    def test_on_trainer_init(self):
         model = torch.nn.Linear(2, 2)
         algo = (
             FedavgConfig()

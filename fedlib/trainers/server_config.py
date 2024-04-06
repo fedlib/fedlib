@@ -7,7 +7,7 @@ from ray.rllib.utils.from_config import from_config
 from ray.util import log_once
 
 # from fedlib.clients.callbacks import ClientCallback
-from fedlib.utils.types import NotProvided, PartialAlgorithmConfigDict, TYPE_CHECKING
+from fedlib.utils.types import NotProvided, PartialTrainerConfigDict, TYPE_CHECKING
 
 if TYPE_CHECKING:
     pass
@@ -25,7 +25,7 @@ class ServerConfig:
 
         # `self.training()`
         self.aggregator = "Mean"
-        self.optimizer = {}
+        self.optimizer = {"type": "SGD", "lr": 0.1}
 
     def training(
         self,
@@ -44,7 +44,7 @@ class ServerConfig:
     def __getitem__(self, item):
         """Shim method to still support accessing properties by key lookup.
 
-        This way, an AlgorithmConfig object can still be used as if a dict, e.g.
+        This way, an TrainerConfig object can still be used as if a dict, e.g.
         by Ray Tune.
 
         Examples:
@@ -99,7 +99,7 @@ class ServerConfig:
 
     def update_from_dict(
         self,
-        config_dict: PartialAlgorithmConfigDict,
+        config_dict: PartialTrainerConfigDict,
     ) -> "ServerConfig":
         """Modifies this AlgorithmConfig via the provided python config dict.
 
@@ -110,7 +110,7 @@ class ServerConfig:
         `ray.rllib.examples.policy.random_policy::RandomPolicy`.
 
         Args:
-            config_dict: The old-style python config dict (PartialAlgorithmConfigDict)
+            config_dict: The old-style python config dict (PartialTrainerConfigDict)
                 to use for overriding some properties defined in there.
 
         Returns:

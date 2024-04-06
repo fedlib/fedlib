@@ -21,3 +21,4 @@
 */.ipynb_checkpoints/
 docs/source/generated/*
 fedlib/sbatch.sh
+fedlib/benchmark/centralized_cifar10.py

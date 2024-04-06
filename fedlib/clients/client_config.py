@@ -6,7 +6,7 @@ from ray.rllib.utils.from_config import from_config
 from ray.util import log_once
 
 from fedlib.clients.callbacks import ClientCallback
-from fedlib.utils.types import NotProvided, PartialAlgorithmConfigDict, TYPE_CHECKING
+from fedlib.utils.types import NotProvided, PartialTrainerConfigDict, TYPE_CHECKING
 
 if TYPE_CHECKING:
     pass
@@ -194,7 +194,7 @@ class ClientConfig:
         compatibility.
 
         Returns:
-            A complete AlgorithmConfigDict, usable in backward-compatible Tune/RLlib
+            A complete TrainerConfigDict, usable in backward-compatible Tune/RLlib
             use cases, e.g. w/ `tune.Tuner().fit()`.
         """
         config = copy.deepcopy(vars(self))
@@ -203,22 +203,22 @@ class ClientConfig:
 
     def update_from_dict(
         self,
-        config_dict: PartialAlgorithmConfigDict,
+        config_dict: PartialTrainerConfigDict,
     ) -> "ClientConfig":
-        """Modifies this AlgorithmConfig via the provided python config dict.
+        """Modifies this TrainerConfig via the provided python config dict.
 
         Warns if `config_dict` contains deprecated keys.
         Silently sets even properties of `self` that do NOT exist. This way, this method
         may be used to configure custom Policies which do not have their own specific
-        AlgorithmConfig classes, e.g.
+        TrainerConfig classes, e.g.
         `ray.rllib.examples.policy.random_policy::RandomPolicy`.
 
         Args:
-            config_dict: The old-style python config dict (PartialAlgorithmConfigDict)
+            config_dict: The old-style python config dict (PartialTrainerConfigDict)
                 to use for overriding some properties defined in there.
 
         Returns:
-            This updated AlgorithmConfig object.
+            This updated TrainerConfig object.
         """
 
         # Modify our properties one by one.

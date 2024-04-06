@@ -28,11 +28,10 @@ logger = logging.getLogger(__name__)
 
 
 class TaskSpec:
-    def __init__(self, task_class=None, alg_config=None):
-        # If None, use the Algorithm's default policy class stored under
+    def __init__(self, task_class=None, trainer_config=None):
         self.task_class = task_class
 
-        self.config = alg_config
+        self.config = trainer_config
 
     def __eq__(self, other: "TaskSpec"):
         return self.task_class == other.task_class and self.config == other.config
@@ -46,7 +45,7 @@ class TaskSpec:
         Returns:
             Task: The Task instance.
         """
-        return from_config(self.task_class, device=device, alg_config=self.config)
+        return from_config(self.task_class, device=device, trainer_config=self.config)
 
 
 @DeveloperAPI
@@ -57,16 +56,16 @@ class Task:
     def __init__(
         self,
         device: str,
-        alg_config: AlgorithmConfigDict,
+        trainer_config: AlgorithmConfigDict,
     ):
         """Initializes a Task instance.
 
         Args:
             device: The device.
-            alg_config: The Algorithm's config dict.
+            trainer_config: The Trainer's config dict.
         """
         self._loss_initialized = False
-        self.config = alg_config
+        self.config = trainer_config
         self.device = device
         self._model = self._init_model().to(self.device)
         self._lock = threading.RLock()
@@ -150,7 +149,6 @@ class Task:
 
     def evaluate(self, test_loader):
         if self._metrics is None:
-            # breakpoint()
             self._metrics = self.init_metrics()
         device = next(self._model.parameters()).device
         self._metrics.to(device)

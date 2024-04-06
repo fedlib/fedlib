@@ -6,7 +6,7 @@ from ray.rllib.utils.annotations import override
 from ray.rllib.utils.debug import update_global_seed_if_necessary
 from ray.util.timer import _Timer
 
-from fedlib.algorithms import Algorithm, AlgorithmConfig
+from fedlib.trainers import Trainer, TrainerConfig
 from fedlib.clients import ClientConfig
 from fedlib.constants import CLIENT_UPDATE, NUM_GLOBAL_STEPS
 from fedlib.core import WorkerGroupConfig, WorkerGroup, ClientWorkerGroup
@@ -14,7 +14,7 @@ from fedlib.datasets import DatasetCatalog
 from fedlib.utils.types import PartialAlgorithmConfigDict
 
 
-class FedavgConfig(AlgorithmConfig):
+class FedavgConfig(TrainerConfig):
     def __init__(self, algo_class=None):
         """Initializes a FedavgConfig instance."""
         super().__init__(algo_class=algo_class or Fedavg)
@@ -45,12 +45,12 @@ class FedavgConfig(AlgorithmConfig):
         )
         return config
 
-    @override(AlgorithmConfig)
+    @override(TrainerConfig)
     def validate(self) -> None:
         super().validate()
 
 
-class Fedavg(Algorithm):
+class Fedavg(Trainer):
     """Federated Averaging Algorithm."""
 
     def __init__(self, config=None, logger_creator=None, **kwargs):
@@ -58,19 +58,19 @@ class Fedavg(Algorithm):
         super().__init__(config, logger_creator, **kwargs)
 
     @classmethod
-    def get_default_config(cls) -> AlgorithmConfig:
+    def get_default_config(cls) -> TrainerConfig:
         return FedavgConfig()
 
-    def setup(self, config: AlgorithmConfig):
+    def setup(self, config: TrainerConfig):
         super().setup(config)
         # Set up our config: Merge the user-supplied config dict (which could
         # be a partial config dict) with the class' default.
-        if not isinstance(config, AlgorithmConfig):
+        if not isinstance(config, TrainerConfig):
             assert isinstance(config, PartialAlgorithmConfigDict)
             config_obj = self.get_default_config()
-            if not isinstance(config_obj, AlgorithmConfig):
+            if not isinstance(config_obj, TrainerConfig):
                 assert isinstance(config, PartialAlgorithmConfigDict)
-                config_obj = AlgorithmConfig().from_dict(config_obj)
+                config_obj = TrainerConfig().from_dict(config_obj)
             config_obj.update_from_dict(config)
             self.config = config_obj
 

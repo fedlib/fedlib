@@ -19,9 +19,9 @@ from ray.tune.tune import run_experiments
 
 
 def _register_all():
-    from fedlib.algorithms.registry import ALGORITHMS, _get_algorithm_class
+    from fedlib.trainers.registry import TRAINERS, _get_algorithm_class
 
-    for key, get_trainable_class_and_config in ALGORITHMS.items():
+    for key, get_trainable_class_and_config in TRAINERS.items():
         register_trainable(key, get_trainable_class_and_config()[0])
     for key in ["__fake", "__sigmoid_fake_data", "__parameter_tuning"]:
         register_trainable(key, _get_algorithm_class(key))
@@ -65,7 +65,7 @@ def load_experiments_from_file(
     """Load experiments from a file. Supports YAML and Python files.
 
     If you want to use a Python file, it has to have a 'config' variable
-    that is an AlgorithmConfig object and - optionally - a `stop` variable defining
+    that is an TrainerConfig object and - optionally - a `stop` variable defining
     the stop criteria.
 
     Args:
@@ -99,7 +99,7 @@ def load_experiments_from_file(
         if not hasattr(module, "config"):
             raise ValueError(
                 "Your Python file must contain a 'config' variable "
-                "that is an AlgorithmConfig object."
+                "that is an TrainerConfig object."
             )
         algo_config = getattr(module, "config")
         if stop is None:

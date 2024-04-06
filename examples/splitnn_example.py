@@ -15,9 +15,9 @@ from torch import Tensor
 from torch import nn
 from torch.autograd import Variable
 
-from fedlib.algorithms import AlgorithmConfig, Server
-from fedlib.algorithms.fedavg import FedavgConfig, Fedavg
-from fedlib.algorithms.server_config import ServerConfig
+from fedlib.trainers import TrainerConfig, Server
+from fedlib.trainers.fedavg import FedavgConfig, Fedavg
+from fedlib.trainers.server_config import ServerConfig
 from fedlib.clients import Client, ClientConfig
 from fedlib.constants import NUM_GLOBAL_STEPS
 from fedlib.core import WorkerGroupConfig
@@ -184,12 +184,14 @@ class ExampleSplitnnConfig(FedavgConfig):
         if not self._is_frozen:
             raise ValueError(
                 "Cannot call `get_server_config()` on an unfrozen "
-                "AlgorithmConfig! Please call `freeze()` first."
+                "TrainerConfig! Please call `freeze()` first."
             )
 
         config = ServerConfig(
             class_specifier=SplitServer,
-            task_spec=TaskSpec(task_class=SplitClassificationServer, alg_config=self),
+            task_spec=TaskSpec(
+                task_class=SplitClassificationServer, trainer_config=self
+            ),
         ).update_from_dict(self.server_config)
         return config
 
@@ -217,7 +219,7 @@ class ExampleSplitnnConfig(FedavgConfig):
 
         config = super().get_worker_group_config()
         return config.task(
-            TaskSpec(task_class=SplitClassificationClient, alg_config=self)
+            TaskSpec(task_class=SplitClassificationClient, trainer_config=self)
         ).worker(worker_class=SplitNNWorker)
 
 
@@ -226,7 +228,7 @@ class ExampleSplit(Fedavg):
         super().__init__(config, logger_creator, **kwargs)
 
     @classmethod
-    def get_default_config(cls) -> AlgorithmConfig:
+    def get_default_config(cls) -> TrainerConfig:
         return ExampleSplitnnConfig()
 
     def training_step(self):

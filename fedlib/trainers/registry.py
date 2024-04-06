@@ -13,7 +13,7 @@ def _import_fedavg():
     return Fedavg, Fedavg.get_default_config()
 
 
-ALGORITHMS = {
+TRAINERS = {
     "FEDAVG": _import_fedavg,
 }
 
@@ -21,8 +21,8 @@ ALGORITHMS = {
 def _get_algorithm_class(alg: str) -> type:
     # This helps us get around a circular import (tune calls rllib._register_all when
     # checking if a rllib Trainable is registered)
-    if alg in ALGORITHMS:
-        return ALGORITHMS[alg]()[0]
+    if alg in TRAINERS:
+        return TRAINERS[alg]()[0]
     elif alg == "script":
         from ray.tune import script_runner
 

@@ -24,7 +24,7 @@ def _compute_scores(distances, i, n, f):
 
 
 def _multi_krum(distances, n, f, m):
-    """Multi_Krum algorithm.
+    """Multi_Krum method.
 
     Arguments:
         distances {dict} -- A dict of dict of distance. distances[i][j] = dist.
