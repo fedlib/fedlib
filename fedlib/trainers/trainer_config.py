@@ -2,14 +2,14 @@ import copy
 import logging
 from typing import Callable, Optional, Union
 
+from ray.util import log_once
 from ray.tune.logger import Logger
+from ray.rllib.utils import force_list
 from ray.tune.registry import _global_registry
 from ray.tune.registry import get_trainable_cls
+from ray.rllib.utils.from_config import from_config
 
-# from ray.tune.result import TRIAL_INFO
-from ray.util import log_once
-
-from fedlib.trainers.callbacks import TrainerCallback
+from fedlib.trainers.callbacks import TrainerCallback, TrainerCallbackList
 from fedlib.trainers.server_config import ServerConfig
 from fedlib.clients import ClientConfig
 from fedlib.constants import FEDLIB_DATASET
@@ -30,14 +30,14 @@ logger = logging.getLogger(__name__)
 
 
 class TrainerConfig:
-    """A Fedlib AlgorithmConfig builds a Fedlib Algorithm from a given
+    """A Fedlib TrainerConfig builds a Fedlib Algorithm from a given
     configuration.
 
     Example:
         >>> from ray.rllib.algorithms.callbacks import MemoryTrackingCallbacks
         >>> # Construct a generic config object, specifying values within different
         >>> # sub-categories, e.g. "training".
-        >>> config = AlgorithmConfig().training(gamma=0.9, lr=0.01)
+        >>> config = TrainerConfig().training(gamma=0.9, lr=0.01)
         ...              .environment(env="CartPole-v1")
         ...              .resources(num_gpus=0)
         ...              .rollouts(num_rollout_workers=4)
@@ -48,7 +48,7 @@ class TrainerConfig:
     Example:
         >>> from ray import tune
         >>> # In combination with a tune.grid_search:
-        >>> config = AlgorithmConfig()
+        >>> config = TrainerConfig()
         >>> config.training(lr=tune.grid_search([0.01, 0.001]))
         >>> # Use `to_dict()` method to get the legacy plain Python config dict
         >>> # for usage with `tune.Tuner().fit()`.
@@ -170,7 +170,7 @@ class TrainerConfig:
                 `examples/custom_metrics_and_callbacks.py` for more usage information.
 
         Returns:
-            This updated AlgorithmConfig object.
+            This updated TrainerConfig object.
         """
         if callbacks_class is None:
             callbacks_class = TrainerCallback
@@ -191,7 +191,7 @@ class TrainerConfig:
         if not self._is_frozen:
             raise ValueError(
                 "Cannot call `get_client_config()` on an unfrozen "
-                "AlgorithmConfig! Please call `freeze()` first."
+                "TrainerConfig! Please call `freeze()` first."
             )
 
         config = (
@@ -209,7 +209,7 @@ class TrainerConfig:
         if not self._is_frozen:
             raise ValueError(
                 "Cannot call `get_server_config()` on an unfrozen "
-                "AlgorithmConfig! Please call `freeze()` first."
+                "TrainerConfig! Please call `freeze()` first."
             )
 
         config = ServerConfig(
@@ -223,7 +223,7 @@ class TrainerConfig:
         if not self._is_frozen:
             raise ValueError(
                 "Cannot call `get_learner_group_config()` on an unfrozen "
-                "AlgorithmConfig! Please call `freeze()` first."
+                "TrainerConfig! Please call `freeze()` first."
             )
 
         config = (
@@ -236,6 +236,18 @@ class TrainerConfig:
             .worker(worker_class=Worker)
         )
         return config
+
+    def build_callbacks(self, callbacllist_cls=NotProvided) -> TrainerCallbackList:
+        if not self._is_frozen:
+            raise ValueError(
+                "Cannot call `build_callbacks()` on an unfrozen "
+                "TrainerConfig! Please call `freeze()` first."
+            )
+        if callbacllist_cls is NotProvided:
+            callbacllist_cls = TrainerCallbackList
+        config_list = force_list(self.callbacks_config)
+        callbacks = [from_config(config) for config in config_list]
+        return callbacllist_cls(callbacks)
 
     # def get_default_worker_class(self) -> Union[Type["Worker"], str]:
     #     """Returns the Learner class to use for this algorithm.
@@ -254,7 +266,7 @@ class TrainerConfig:
         logger_creator: Optional[Callable[[], Logger]] = None,
         use_copy: bool = True,
     ) -> "Trainer":
-        """Builds an Algorithm from the AlgorithmConfig.
+        """Builds an Algorithm from the TrainerConfig.
 
         Args:
             env: Name of the environment to use (e.g. a gym-registered str),
@@ -283,20 +295,20 @@ class TrainerConfig:
     def __getitem__(self, item):
         """Shim method to still support accessing properties by key lookup.
 
-        This way, an AlgorithmConfig object can still be used as if a dict, e.g.
+        This way, an TrainerConfig object can still be used as if a dict, e.g.
         by Ray Tune.
 
         Examples:
-            >>> from ray.rllib.algorithms.algorithm_config import AlgorithmConfig
-            >>> config = AlgorithmConfig()
+            >>> from ray.rllib.algorithms.algorithm_config import TrainerConfig
+            >>> config = TrainerConfig()
             >>> print(config["lr"])
             ... 0.001
         """
-        # TODO: Uncomment this once all algorithms use AlgorithmConfigs under the
+        # TODO: Uncomment this once all algorithms use TrainerConfigs under the
         #  hood (as well as Ray Tune).
         # if log_once("algo_config_getitem"):
         #    logger.warning(
-        #        "AlgorithmConfig objects should NOT be used as dict! "
+        #        "TrainerConfig objects should NOT be used as dict! "
         #        f"Try accessing `{item}` directly as a property."
         #    )
         # In case user accesses "old" keys, which need to
@@ -306,17 +318,17 @@ class TrainerConfig:
 
     def __setitem__(self, key, value):
         # TODO: Remove comments once all methods/functions only support
-        #  AlgorithmConfigs and there is no more ambiguity anywhere in the code
-        #  on whether an AlgorithmConfig is used or an old python config dict.
+        #  TrainerConfigs and there is no more ambiguity anywhere in the code
+        #  on whether an TrainerConfig is used or an old python config dict.
         # raise AttributeError(
-        #    "AlgorithmConfig objects should not have their values set like dicts"
+        #    "TrainerConfig objects should not have their values set like dicts"
         #    f"(`config['{key}'] = {value}`), "
         #    f"but via setting their properties directly (config.{prop} = {value})."
         # )
         if key == "multiagent":
             raise AttributeError(
-                "Cannot set `multiagent` key in an AlgorithmConfig!\nTry setting "
-                "the multi-agent components of your AlgorithmConfig object via the "
+                "Cannot set `multiagent` key in an TrainerConfig!\nTry setting "
+                "the multi-agent components of your TrainerConfig object via the "
                 "`multi_agent()` method and its arguments.\nE.g. `config.multi_agent("
                 "policies=.., policy_mapping_fn.., policies_to_train=..)`."
             )
@@ -368,7 +380,7 @@ class TrainerConfig:
         self._is_frozen = True
 
         # Also freeze underlying eval config, if applicable.
-        # if isinstance(self.evaluation_config, AlgorithmConfig):
+        # if isinstance(self.evaluation_config, TrainerConfig):
         #     self.evaluation_config.freeze()
 
         # TODO: Flip out all set/dict/list values into frozen versions
@@ -422,7 +434,7 @@ class TrainerConfig:
 
     @staticmethod
     def _translate_special_keys(key: str) -> str:
-        # Handle special key (str) -> `AlgorithmConfig.[some_property]` cases.
+        # Handle special key (str) -> `TrainerConfig.[some_property]` cases.
         if key == "callbacks":
             key = "callbacks_config"
         elif key == "custom_eval_function":
@@ -440,12 +452,12 @@ class TrainerConfig:
         self,
         config_dict: PartialTrainerConfigDict,
     ) -> "TrainerConfig":
-        """Modifies this AlgorithmConfig via the provided python config dict.
+        """Modifies this TrainerConfig via the provided python config dict.
 
         Warns if `config_dict` contains deprecated keys.
         Silently sets even properties of `self` that do NOT exist. This way, this method
         may be used to configure custom Policies which do not have their own specific
-        AlgorithmConfig classes, e.g.
+        TrainerConfig classes, e.g.
         `ray.rllib.examples.policy.random_policy::RandomPolicy`.
 
         Args:
@@ -453,7 +465,7 @@ class TrainerConfig:
                 to use for overriding some properties defined in there.
 
         Returns:
-            This updated AlgorithmConfig object.
+            This updated TrainerConfig object.
         """
         eval_call = {}
 
@@ -462,7 +474,7 @@ class TrainerConfig:
             key = self._translate_special_keys(key)
 
             # Ray Tune saves additional data under this magic keyword.
-            # This should not get treated as AlgorithmConfig field.
+            # This should not get treated as TrainerConfig field.
             # if key == TRIAL_INFO:
             #     continue
 

@@ -6,20 +6,40 @@ from ray.rllib.utils.annotations import override
 from ray.rllib.utils.debug import update_global_seed_if_necessary
 from ray.util.timer import _Timer
 
-from fedlib.trainers import Trainer, TrainerConfig
+from fedlib.trainers import Trainer, TrainerConfig, TrainerCallback, TrainerCallbackList
 from fedlib.clients import ClientConfig
-from fedlib.constants import CLIENT_UPDATE, NUM_GLOBAL_STEPS
+from fedlib.constants import CLIENT_UPDATE, NUM_GLOBAL_STEPS, TRAIN_LOSS
 from fedlib.core import WorkerGroupConfig, WorkerGroup, ClientWorkerGroup
 from fedlib.datasets import DatasetCatalog
 from fedlib.utils.types import PartialAlgorithmConfigDict
 
 
-class FedavgConfig(TrainerConfig):
+class FedavgCallback(TrainerCallback):
+    def on_local_round_end(
+        self,
+        trainer: "FedavgTrainer",
+    ):
+        """Called when the local round ends."""
+
+
+class FedavgTrainerCallbackList(TrainerCallbackList):
+    def on_local_round_end(self, trainer: "FedavgTrainer"):
+        """Called when the local round ends."""
+        for callback in self._callbacks:
+            callback.on_local_round_end(trainer)
+
+
+class FedavgTrainerConfig(TrainerConfig):
     def __init__(self, algo_class=None):
-        """Initializes a FedavgConfig instance."""
-        super().__init__(algo_class=algo_class or Fedavg)
+        """Initializes a FedavgTrainerConfig instance."""
+        super().__init__(algo_class=algo_class or FedavgTrainer)
 
         self.num_malicious_clients = 0
+
+        self.callbacks_config = FedavgCallback
+
+    def callbacks(self, callbacks_class) -> TrainerConfig:
+        return super().callbacks(callbacks_class)
 
     def get_client_config(self) -> ClientConfig:
         config = ClientConfig(class_specifier="fedlib.clients.Client").update_from_dict(
@@ -46,11 +66,15 @@ class FedavgConfig(TrainerConfig):
         return config
 
     @override(TrainerConfig)
+    def build_callbacks(self, callbacllist_cls=None) -> TrainerCallbackList:
+        return super().build_callbacks(callbacllist_cls or FedavgTrainerCallbackList)
+
+    @override(TrainerConfig)
     def validate(self) -> None:
         super().validate()
 
 
-class Fedavg(Trainer):
+class FedavgTrainer(Trainer):
     """Federated Averaging Algorithm."""
 
     def __init__(self, config=None, logger_creator=None, **kwargs):
@@ -59,7 +83,7 @@ class Fedavg(Trainer):
 
     @classmethod
     def get_default_config(cls) -> TrainerConfig:
-        return FedavgConfig()
+        return FedavgTrainerConfig()
 
     def setup(self, config: TrainerConfig):
         super().setup(config)
@@ -114,28 +138,36 @@ class Fedavg(Trainer):
 
         def local_training(worker, client):
             dataset = worker.dataset.get_client_dataset(client.client_id)
-            return client.train_one_round(dataset)
+            result = client.train_one_round(dataset)
+            return result
 
         clients = self.client_manager.trainable_clients
         self.local_results = self.worker_group.foreach_execution(
             local_training, clients
         )
 
+        self.callbacks.on_local_round_end(self)
         updates = [result.pop(CLIENT_UPDATE, None) for result in self.local_results]
-        losses = []
-        for result in self.local_results:
-            loss = result.pop("avg_loss")
-            losses.append(loss)
+
+        results = {}
+        results.update(self.compile_train_results(self.local_results))
 
         self._counters[NUM_GLOBAL_STEPS] += 1
-        # train_results
         global_vars = {
             "timestep": self._counters[NUM_GLOBAL_STEPS],
         }
-        results = {"train_loss": np.mean(losses)}
-        server_return = self.server.step(updates, global_vars)
-        results.update(server_return)
 
+        server_return = self.server.step(updates, global_vars)
+
+        results.update(server_return)
+        return results
+
+    def compile_train_results(self, results):
+        losses = []
+        for result in results:
+            loss = result.pop(TRAIN_LOSS)
+            losses.append(loss)
+        results = {TRAIN_LOSS: np.mean(losses)}
         return results
 
     def evaluate(self):

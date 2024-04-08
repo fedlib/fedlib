@@ -3,6 +3,7 @@ from .trainer_config import TrainerConfig
 from .callbacks import TrainerCallback, TrainerCallbackList
 from .client_manager import ClientManager
 from .server import Server
+from .fedavg import FedavgTrainer, FedavgTrainerConfig
 
 __all__ = [
     "Trainer",
@@ -11,4 +12,6 @@ __all__ = [
     "ClientManager",
     "TrainerCallback",
     "TrainerCallbackList",
+    "FedavgTrainer",
+    "FedavgTrainerConfig",
 ]

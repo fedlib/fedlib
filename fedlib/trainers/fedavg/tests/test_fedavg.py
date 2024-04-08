@@ -6,7 +6,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
-from fedlib.trainers.fedavg import FedavgConfig
+from fedlib.trainers.fedavg import FedavgTrainerConfig
 from fedlib.datasets import DatasetCatalog
 from fedlib.datasets import ToyFLDataset
 
@@ -18,7 +18,7 @@ class TestFedavg(unittest.TestCase):
 
         self.global_lr = 0.1
         self.alg = (
-            FedavgConfig()
+            FedavgTrainerConfig()
             .resources(num_remote_workers=2, num_gpus_per_worker=0)
             .data(
                 num_clients=1,

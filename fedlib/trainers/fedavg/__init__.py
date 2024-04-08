@@ -1,3 +1,3 @@
-from .fedavg import FedavgConfig, Fedavg
+from .fedavg import FedavgTrainerConfig, FedavgTrainer
 
-__all__ = ["FedavgConfig", "Fedavg"]
+__all__ = ["FedavgTrainerConfig", "FedavgTrainer"]

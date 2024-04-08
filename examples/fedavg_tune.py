@@ -1,12 +1,12 @@
 import ray
-from fedlib.trainers.fedavg import FedavgConfig, Fedavg
+from fedlib.trainers.fedavg import FedavgTrainerConfig, FedavgTrainer
 from ray import tune
 from ray.tune.stopper import MaximumIterationStopper
 
 from fedlib.trainers import TrainerConfig
 
 
-class ExampleFedavgConfig(FedavgConfig):
+class ExampleFedavgConfig(FedavgTrainerConfig):
     def __init__(self, algo_class=None):
         """Initialize a FedavgConfig instance."""
         super().__init__(algo_class=algo_class or ExampleFedavg)
@@ -19,7 +19,7 @@ class ExampleFedavgConfig(FedavgConfig):
         self.global_model = "cnn"
 
 
-class ExampleFedavg(Fedavg):
+class ExampleFedavg(FedavgTrainer):
     def __init__(self, config=None, logger_creator=None, **kwargs):
         super().__init__(config, logger_creator, **kwargs)
 

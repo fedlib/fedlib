@@ -8,9 +8,9 @@ if TYPE_CHECKING:
 
 
 def _import_fedavg():
-    from .fedavg import Fedavg
+    from .fedavg import FedavgTrainer
 
-    return Fedavg, Fedavg.get_default_config()
+    return FedavgTrainer, FedavgTrainer.get_default_config()
 
 
 TRAINERS = {

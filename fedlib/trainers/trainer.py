@@ -1,16 +1,13 @@
 from typing import Callable, Dict, Optional, Union
 
-from ray.air.integrations.wandb import setup_wandb
-from ray.rllib.utils import force_list
-from ray.rllib.utils.from_config import from_config
-from ray.tune.execution.placement_groups import PlacementGroupFactory
 from ray.tune.logger import Logger
 from ray.tune.resources import Resources
 from ray.tune.trainable import Trainable
 from ray.util.annotations import PublicAPI
+from ray.air.integrations.wandb import setup_wandb
+from ray.tune.execution.placement_groups import PlacementGroupFactory
 
 from fedlib.trainers.trainer_config import TrainerConfig
-from fedlib.trainers.callbacks import TrainerCallbackList
 from fedlib.trainers.client_manager import ClientManager
 from fedlib.utils.types import ResultDict, PartialAlgorithmConfigDict
 
@@ -83,8 +80,7 @@ class Trainer(Trainable):
         # Set up our config: Merge the user-supplied config dict (which could
         # be a partial config dict) with the class' default.
 
-        callback = from_config(config.pop("callbacks_config"))
-        self.callbacks = TrainerCallbackList(force_list(callback))
+        self.callbacks = config.build_callbacks()
         self.callbacks.setup(self)
 
         if not isinstance(config, TrainerConfig):

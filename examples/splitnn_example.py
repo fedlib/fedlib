@@ -16,7 +16,7 @@ from torch import nn
 from torch.autograd import Variable
 
 from fedlib.trainers import TrainerConfig, Server
-from fedlib.trainers.fedavg import FedavgConfig, Fedavg
+from fedlib.trainers.fedavg import FedavgTrainerConfig, FedavgTrainer
 from fedlib.trainers.server_config import ServerConfig
 from fedlib.clients import Client, ClientConfig
 from fedlib.constants import NUM_GLOBAL_STEPS
@@ -168,7 +168,7 @@ class SplitClassificationClient(Classifier):
             opt.step()
 
 
-class ExampleSplitnnConfig(FedavgConfig):
+class ExampleSplitnnConfig(FedavgTrainerConfig):
     def __init__(self, algo_class=None):
         """Initialize a FedavgConfig instance."""
         super().__init__(algo_class=algo_class or ExampleSplit)
@@ -223,7 +223,7 @@ class ExampleSplitnnConfig(FedavgConfig):
         ).worker(worker_class=SplitNNWorker)
 
 
-class ExampleSplit(Fedavg):
+class ExampleSplit(FedavgTrainer):
     def __init__(self, config=None, logger_creator=None, **kwargs):
         super().__init__(config, logger_creator, **kwargs)
 

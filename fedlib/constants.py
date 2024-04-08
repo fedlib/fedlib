@@ -33,7 +33,9 @@ DEFAULT_DATA_ROOT = "~/fldata"
 MAIN_ACTOR = "main_actor"
 
 GLOBAL_MODEL = "global_model"
+CLIENT_ID = "client_id"
 CLIENT_UPDATE = "client_update"
+TRAIN_LOSS = "train_loss"
 
 # Map fedlib categories to rllib categories supported by Tune.
 # This is a temporary solution as we cannot add new categories to Tune so far.

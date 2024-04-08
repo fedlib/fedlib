@@ -4,7 +4,7 @@ import ray
 import torch
 
 from fedlib.trainers import TrainerCallback
-from fedlib.trainers.fedavg import FedavgConfig
+from fedlib.trainers.fedavg import FedavgTrainerConfig
 from fedlib.datasets import DatasetCatalog, ToyFLDataset
 
 
@@ -26,7 +26,7 @@ class TestCallbacks(unittest.TestCase):
     def test_on_trainer_init(self):
         model = torch.nn.Linear(2, 2)
         algo = (
-            FedavgConfig()
+            FedavgTrainerConfig()
             .resources(num_remote_workers=2, num_gpus_per_worker=0)
             .data(
                 num_clients=1,
