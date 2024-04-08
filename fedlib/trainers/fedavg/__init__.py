@@ -1,3 +1,13 @@
-from .fedavg import FedavgTrainerConfig, FedavgTrainer
+from .fedavg import (
+    FedavgTrainerConfig,
+    FedavgTrainer,
+    FedavgCallback,
+    FedavgTrainerCallbackList,
+)
 
-__all__ = ["FedavgTrainerConfig", "FedavgTrainer"]
+__all__ = [
+    "FedavgTrainerConfig",
+    "FedavgTrainer",
+    "FedavgCallback",
+    "FedavgTrainerCallbackList",
+]

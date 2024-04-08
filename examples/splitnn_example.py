@@ -38,7 +38,10 @@ class SplitClient(Client):
         data, target = data_reader.get_next_train_batch()
         data, target = self.callbacks.on_train_batch_begin(data, target)
         smashed_data = sess.task.train_one_batch(
-            data, target, self.callbacks.on_backward_end
+            data,
+            target,
+            self.callbacks.on_backward_begin,
+            self.callbacks.on_backward_end,
         )
         return {"smashed_data": smashed_data, "labels": target}
 
@@ -146,6 +149,7 @@ class SplitClassificationClient(Classifier):
         self,
         data: torch.Tensor,
         target: torch.Tensor,
+        on_backward_begin: Callable = None,
         on_backward_end: Callable = None,
     ):
         model = self.full_model.modelA

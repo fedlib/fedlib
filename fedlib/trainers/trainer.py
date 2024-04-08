@@ -80,9 +80,6 @@ class Trainer(Trainable):
         # Set up our config: Merge the user-supplied config dict (which could
         # be a partial config dict) with the class' default.
 
-        self.callbacks = config.build_callbacks()
-        self.callbacks.setup(self)
-
         if not isinstance(config, TrainerConfig):
             assert isinstance(config, PartialAlgorithmConfigDict)
             config_obj = self.get_default_config()
@@ -102,6 +99,8 @@ class Trainer(Trainable):
                 project=config.get("wandb_project", None),
             )
 
+        self.callbacks = config.build_callbacks()
+        self.callbacks.setup(self)
         self.callbacks.on_trainer_init(trainer=self)
 
     def step(self) -> ResultDict:

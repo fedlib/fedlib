@@ -56,7 +56,10 @@ class Client:
             data, target = data_reader.get_next_train_batch()
             data, target = self.callbacks.on_train_batch_begin(data, target)
             loss = sess.task.train_one_batch(
-                data, target, self.callbacks.on_backward_end
+                data,
+                target,
+                self.callbacks.on_backward_begin,
+                self.callbacks.on_backward_end,
             )
             running_loss += loss
 

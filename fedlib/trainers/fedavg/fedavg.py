@@ -86,7 +86,6 @@ class FedavgTrainer(Trainer):
         return FedavgTrainerConfig()
 
     def setup(self, config: TrainerConfig):
-        super().setup(config)
         # Set up our config: Merge the user-supplied config dict (which could
         # be a partial config dict) with the class' default.
         if not isinstance(config, TrainerConfig):
@@ -123,6 +122,8 @@ class FedavgTrainer(Trainer):
         self.local_results = self.worker_group.foreach_execution(
             lambda _, client: client.setup(), clients
         )
+
+        super().setup(config)
 
     def _setup_worker_group(self) -> WorkerGroup:
         worker_group_config = self.config.get_worker_group_config()
@@ -165,7 +166,9 @@ class FedavgTrainer(Trainer):
     def compile_train_results(self, results):
         losses = []
         for result in results:
-            loss = result.pop(TRAIN_LOSS)
+            loss = result.pop(TRAIN_LOSS, None)
+            if loss is None:
+                return {}
             losses.append(loss)
         results = {TRAIN_LOSS: np.mean(losses)}
         return results

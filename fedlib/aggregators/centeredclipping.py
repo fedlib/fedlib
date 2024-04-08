@@ -4,11 +4,9 @@ import torch
 
 
 class Centeredclipping(object):
-    r"""A robust aggregator from paper `Learning from History for Byzantine
-    Robust Optimization.
-
-    <http://proceedings.mlr.press/v139/karimireddy21a.html>`_. It iteratively
-    clips the updates around the center while updating the center accordingly.
+    """A robust aggregator from the `"Learning from History for Byzantine Robust Optimization"
+    <http://proceedings.mlr.press/v139/karimireddy21a.html>`_ paper.
+    It iteratively clips the updates around the center while updating the center accordingly.
 
     Args:
         tau (float): The threshold of clipping. Default 10.0

@@ -13,8 +13,15 @@ def _import_fedavg():
     return FedavgTrainer, FedavgTrainer.get_default_config()
 
 
+def _import_fedprox():
+    from .fedprox import FedProxTrainer
+
+    return FedProxTrainer, FedProxTrainer.get_default_config()
+
+
 TRAINERS = {
     "FEDAVG": _import_fedavg,
+    "FEDPROX": _import_fedprox,
 }
 
 

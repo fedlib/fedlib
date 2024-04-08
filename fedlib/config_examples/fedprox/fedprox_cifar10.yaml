@@ -8,7 +8,7 @@ fedavg_blades:
       grid_search: [ 121 ]
     dataset_config:
       type: CIFAR10
-      num_clients: 60
+      num_clients: 10
       num_classes: 10
       train_batch_size: 64
 
@@ -16,7 +16,7 @@ fedavg_blades:
         type: DirichletPartitioner
         alpha:
           grid_search: [200, 0.1]
-        num_clients: 60
+        num_clients: 10
 
     evaluation_interval: 50
 

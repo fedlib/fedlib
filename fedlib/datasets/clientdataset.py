@@ -53,7 +53,7 @@ class ClientDataset:
         self.train_loader = DataLoader(
             self._train_set,
             batch_size=self.train_batch_size,
-            num_workers=4,
+            num_workers=self.num_workers,
             # shuffle=True,
         )
 

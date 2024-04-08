@@ -117,6 +117,10 @@ class Task:
     def zero_psudo_grad(self):
         self._saved_state_dict = copy.deepcopy(self._model.state_dict())
 
+    @property
+    def global_model_state_dict(self):
+        return self._saved_state_dict
+
     def compute_psudo_grad(self):
         pseudo_grad = {}
         for name, param in self._model.named_parameters():
@@ -129,6 +133,7 @@ class Task:
         self,
         data: torch.Tensor,
         target: torch.Tensor,
+        on_backward_begin: Callable = None,
         on_backward_end: Callable = None,
     ):
         self._model.train()
@@ -136,6 +141,8 @@ class Task:
             opt.zero_grad()
         loss = self.loss(self._model, data, target)
 
+        if callable(on_backward_begin):
+            on_backward_begin(loss, self)
         loss.backward()
         if on_backward_end:
             on_backward_end(self)

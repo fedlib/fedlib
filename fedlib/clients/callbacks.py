@@ -41,6 +41,11 @@ class ClientCallback:
         """
         return data, target
 
+    def on_backward_begin(self, loss, task):
+        """A callback method called before backward and before parameter
+        update."""
+        pass
+
     def on_backward_end(self, task):
         """A callback method called after backward and before parameter update.
 
@@ -90,6 +95,11 @@ class ClientCallbackList:
         for callback in self._callbacks:
             data, target = callback.on_train_batch_begin(data, target)
         return data, target
+
+    def on_backward_begin(self, loss, task):
+        for callback in self._callbacks:
+            if callback:
+                callback.on_backward_begin(loss, task)
 
     def on_backward_end(self, task):
         for callback in self._callbacks:

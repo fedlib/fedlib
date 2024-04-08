@@ -4,6 +4,7 @@ from .callbacks import TrainerCallback, TrainerCallbackList
 from .client_manager import ClientManager
 from .server import Server
 from .fedavg import FedavgTrainer, FedavgTrainerConfig
+from .fedprox import FedProxTrainer, FedProxTrainerConfig
 
 __all__ = [
     "Trainer",
@@ -14,4 +15,6 @@ __all__ = [
     "TrainerCallbackList",
     "FedavgTrainer",
     "FedavgTrainerConfig",
+    "FedProxTrainer",
+    "FedProxTrainerConfig",
 ]
