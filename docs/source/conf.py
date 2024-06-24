@@ -31,7 +31,6 @@ extensions = [
     "sphinx.ext.doctest",
     # "sphinx_gallery.gen_gallery",
     # "sphinx_gallery.load_style",
-    # "m2r2",
 ]
 
 templates_path = ["_templates"]
