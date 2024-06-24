@@ -19,9 +19,9 @@
        :alt: Static Badge
        :target: https://pytorch.org/get-started/pytorch-2.0/
 
-    .. image:: https://img.shields.io/badge/Ray-2.8-brightgreen?logo=ray&logoColor=blue
+    .. image:: https://img.shields.io/badge/Ray-2.30-brightgreen?logo=ray&logoColor=blue
        :alt: Static Badge
-       :target: https://docs.ray.io/en/releases-2.8.0/
+       :target: https://docs.ray.io/en/releases-2.30.0/
 
     .. image:: https://readthedocs.org/projects/fedlib/badge/?version=latest
         :target: https://fedlib.readthedocs.io/en/latest/?badge=latest
