@@ -12,6 +12,7 @@
 *.whl
 *.egg
 *.pkl
+.vscode
 *test_batch*
 */build/
 */dist
