@@ -115,7 +115,10 @@ class Task:
         return None
 
     def zero_psudo_grad(self):
-        self._saved_state_dict = copy.deepcopy(self._model.state_dict())
+        self._saved_state_dict = {}
+        for name, param in self._model.named_parameters():
+            if param.requires_grad:
+                self._saved_state_dict[name] = param.data.clone()
 
     @property
     def global_model_state_dict(self):
@@ -124,9 +127,10 @@ class Task:
     def compute_psudo_grad(self):
         pseudo_grad = {}
         for name, param in self._model.named_parameters():
-            pseudo_grad[name] = param.data - self._saved_state_dict[name]
+            if param.requires_grad:
+                pseudo_grad[name] = param.data - self._saved_state_dict[name]
 
-        self._model.load_state_dict(self._saved_state_dict)
+        self._model.load_state_dict(self._saved_state_dict, strict=False)
         return pseudo_grad
 
     def train_one_batch(
@@ -231,10 +235,10 @@ class Task:
         }
 
     @DeveloperAPI
-    def set_weights(self, weights: ModelWeights) -> None:
+    def set_weights(self, weights: ModelWeights, strict=False) -> None:
         device = next(self._model.parameters()).device
         weights = convert_to_torch_tensor(weights, device=device)
-        self._model.load_state_dict(weights)
+        self._model.load_state_dict(weights, strict=strict)
 
     @DeveloperAPI
     def import_model_from_h5(self, import_file: str) -> None:

@@ -212,7 +212,10 @@ class WorkerGroup:
             num_cpus=self.num_cpus_per_worker,
             num_gpus=self.num_gpus_per_worker,
             resources=self.additional_resources_per_worker,
-            runtime_env=RuntimeEnv(eager_install=eager_install),
+            runtime_env=RuntimeEnv(
+                eager_install=eager_install,
+                env_vars={"CUBLAS_WORKSPACE_CONFIG": ":8192:8"},
+            ),
         )(self._base_cls)
         self.start()
 
