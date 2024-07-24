@@ -11,8 +11,7 @@ from ray.rllib.utils.typing import (
     ResultDict,
 )
 from ray.tune.stopper import MaximumIterationStopper
-from torch import Tensor
-from torch import nn
+from torch import nn, Tensor
 from torch.autograd import Variable
 
 from fedlib.trainers import TrainerConfig, Server
