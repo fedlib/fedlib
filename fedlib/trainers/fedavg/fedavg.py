@@ -101,7 +101,7 @@ class FedavgTrainer(Trainer):
         update_global_seed_if_necessary("torch", self.config.random_seed)
 
         server_device = "cuda" if self.config.num_gpus_for_driver > 0 else "cpu"
-        self.server = self.config.get_server_config().build(server_device)
+        self.server = self.config.get_server_config().build(device=server_device)
         self.worker_group = self._setup_worker_group()
 
         self._setup_dataset()
