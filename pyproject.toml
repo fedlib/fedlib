@@ -32,6 +32,7 @@ tqdm = "*"
 wandb = "^0.17"
 dm_tree = "*"
 torchmetrics = "*"
+datasets = "*"
 
 # [tool.poetry.dev-dependencies]
 pytest-xdist = "*"
