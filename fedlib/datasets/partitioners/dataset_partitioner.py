@@ -1,10 +1,11 @@
 import random
 import itertools
 from abc import ABC, abstractmethod
-from typing import List, Any, Callable, Iterator, Dict, Tuple
+from typing import List, Any, Callable, Iterator, Dict, Tuple, Union
 
 import numpy as np
 import torch
+import datasets
 from torch.utils.data import Dataset, Subset
 
 from fedlib.datasets.clientdataset import ClientDataset
@@ -54,7 +55,9 @@ class DatasetPartitioner(ABC):
         return dict(zip(client_ids, subsets))
 
     def generate_paired_subsets(
-        self, train_dataset: Dataset, test_dataset: Dataset
+        self,
+        train_dataset: Union[Dataset, datasets.Dataset],
+        test_dataset: Union[Dataset, datasets.Dataset],
     ) -> Dict[str, Tuple[Subset, Subset]]:
         """Generates paired subsets from two keyconcepts that may interact with
         each other.
@@ -72,7 +75,10 @@ class DatasetPartitioner(ABC):
         return dict(zip(client_ids, zip(train_subsets, test_subsets)))
 
     def generate_client_datasets(
-        self, train_dataset: Dataset, test_dataset: Dataset, **kwargs
+        self,
+        train_dataset: Union[Dataset, datasets.Dataset],
+        test_dataset: Union[Dataset, datasets.Dataset],
+        **kwargs,
     ) -> List[ClientDataset]:
         """Generates client keyconcepts from two keyconcepts that may interact
         with each other.
@@ -91,8 +97,12 @@ class DatasetPartitioner(ABC):
             test_indices = test_subset.indices
             random.shuffle(train_indices)
             random.shuffle(test_indices)
-            shuffled_train_subset = Subset(train_dataset, train_indices)
-            shuffled_test_subset = Subset(test_dataset, test_indices)
+            if isinstance(train_dataset, datasets.Dataset):
+                shuffled_train_subset = train_dataset.select(train_indices)
+                shuffled_test_subset = test_dataset.select(test_indices)
+            else:
+                shuffled_train_subset = Subset(train_dataset, train_indices)
+                shuffled_test_subset = Subset(test_dataset, test_indices)
             client_datasets.append(
                 ClientDataset(
                     uid=client_id,

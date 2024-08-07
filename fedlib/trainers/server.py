@@ -119,7 +119,7 @@ class Server(LearningRateSchedule, _Base):
         update = self._aggregator(local_updates)
         self.zero_grad()
         beg = 0
-        for param in self._model.parameters():
+        for name, param in self._model.named_parameters():
             if not param.requires_grad:
                 continue
             end = beg + len(param.data.view(-1))
