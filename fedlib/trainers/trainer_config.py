@@ -338,9 +338,12 @@ class TrainerConfig:
         """Validates all values in this config."""
 
         # Check that the `num_clients` is set correctly.
-        if self.dataset_config.get("custom_dataset") and 
-            self.dataset_config.get("num_clients", None) is None 
-            and self.dataset_config.get("custom_dataset_config", None) is None:
+        if self.dataset_config.get("custom_dataset_config", None) is not None:
+            dataset_config = self.dataset_config["custom_dataset_config"]
+            self.num_clients = dataset_config["num_clients"]
+        elif (self.dataset_config.get("custom_dataset") and
+            self.dataset_config.get("num_clients", None) is None and
+            self.dataset_config.get("custom_dataset_config", None) is None):
             dataset_cls = _global_registry.get(
                 FEDLIB_DATASET, self.dataset_config["custom_dataset"]
             )
