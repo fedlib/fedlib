@@ -23,7 +23,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.9"
 torch = "^2.3.0"
-torchvision = "^0.18.0"
+torchvision = "^0.19.0"
 torchaudio = "*"
 ray = { version = "^2.30.0", extras = ["rllib", "tune"] }
 requests = "^2.27.1"
