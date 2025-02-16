@@ -71,7 +71,7 @@ class TrainerCallbackList:
                         " in `ray.tune.callback.Callback`.",
                         FutureWarning,
                     )
-                    callback.setup()
+                    callback.setup(trainer)
                 else:
                     raise e
 
