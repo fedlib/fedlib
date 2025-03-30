@@ -172,6 +172,9 @@ class Task:
                 data, target = data.to(device), target.to(device)
                 output = self._model(data)
                 result["length"] += len(target)
+                # Drop this batch if the length is 1
+                if len(target) <= 1:
+                    continue
                 self._metrics(output, target)
         result.update(self._metrics.compute())
         return result
