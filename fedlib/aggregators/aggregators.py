@@ -202,7 +202,10 @@ class DnC(object):
         for lst in benign_ids[1:]:
             intersection_set.intersection_update(lst)
 
-        # Convert the set back to a list
-        benign_ids = list(intersection_set)
-        benign_updates = updates[benign_ids, :].mean(dim=0)
+        if intersection_set:
+            # Convert the set back to a list
+            benign_ids = list(intersection_set)
+            benign_updates = updates[benign_ids, :].mean(dim=0)
+        else:
+            benign_updates = torch.zeros_like(inputs[0])
         return benign_updates
