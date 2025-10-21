@@ -124,7 +124,7 @@ class Server(LearningRateSchedule, _Base):
                 continue
             end = beg + len(param.data.view(-1))
             psudo_grad = update[beg:end].reshape_as(param.data)
-            param.grad = -psudo_grad.clone().detach().to(param.device)
+            param.grad = -psudo_grad.clone().detach().to(param.device, dtype=param.dtype)
             beg = end
         for opt in self._optimizers:
             opt.step()
