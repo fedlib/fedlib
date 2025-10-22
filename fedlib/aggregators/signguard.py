@@ -61,11 +61,14 @@ class Signguard(object):
         )
 
         inter = list(set(S1_idxs) & set(S2_idxs))
-        benign_updates = []
-        for idx in inter:
-            if l2norms[idx] > M:
-                updates[idx] = torch_utils.clip_tensor_norm_(updates[idx], M)
-            benign_updates.append(updates[idx])
+        if inter:
+            benign_updates = []
+            for idx in inter:
+                if l2norms[idx] > M:
+                    updates[idx] = torch_utils.clip_tensor_norm_(updates[idx], M)
+                benign_updates.append(updates[idx])
 
-        values = self.agg(benign_updates)
+            values = self.agg(benign_updates)
+        else:
+            values = torch.zeros_like(inputs[0])
         return values
