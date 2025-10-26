@@ -1,14 +1,16 @@
-import random
 import itertools
+import random
 from abc import ABC, abstractmethod
-from typing import List, Any, Callable, Iterator, Dict, Tuple, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, List, Tuple, Union
 
 import numpy as np
 import torch
-import datasets
 from torch.utils.data import Dataset, Subset
 
 from fedlib.datasets.clientdataset import ClientDataset
+
+if TYPE_CHECKING:
+    from datasets import Dataset as HuggingFaceDataset
 
 
 class DatasetPartitioner(ABC):
@@ -56,8 +58,8 @@ class DatasetPartitioner(ABC):
 
     def generate_paired_subsets(
         self,
-        train_dataset: Union[Dataset, datasets.Dataset],
-        test_dataset: Union[Dataset, datasets.Dataset],
+        train_dataset: Union[Dataset, "HuggingFaceDataset"],
+        test_dataset: Union[Dataset, "HuggingFaceDataset"],
     ) -> Dict[str, Tuple[Subset, Subset]]:
         """Generates paired subsets from two keyconcepts that may interact with
         each other.
@@ -76,8 +78,8 @@ class DatasetPartitioner(ABC):
 
     def generate_client_datasets(
         self,
-        train_dataset: Union[Dataset, datasets.Dataset],
-        test_dataset: Union[Dataset, datasets.Dataset],
+        train_dataset: Union[Dataset, "HuggingFaceDataset"],
+        test_dataset: Union[Dataset, "HuggingFaceDataset"],
         **kwargs,
     ) -> List[ClientDataset]:
         """Generates client keyconcepts from two keyconcepts that may interact
@@ -90,6 +92,7 @@ class DatasetPartitioner(ABC):
         Returns:
             A list of ClientDataset instances.
         """
+
         client_datasets = []
         paired_subsets = self.generate_paired_subsets(train_dataset, test_dataset)
         for client_id, (train_subset, test_subset) in paired_subsets.items():
@@ -97,7 +100,7 @@ class DatasetPartitioner(ABC):
             test_indices = test_subset.indices
             random.shuffle(train_indices)
             random.shuffle(test_indices)
-            if isinstance(train_dataset, datasets.Dataset):
+            if not isinstance(train_dataset, Dataset):
                 shuffled_train_subset = train_dataset.select(train_indices)
                 shuffled_test_subset = test_dataset.select(test_indices)
             else:

@@ -50,7 +50,7 @@ Installation
 .. code-block:: bash
 
     cd fedlib/fedlib
-    python train.py file ./tuned_examples/fedsgd_cnn_fashion_mnist.yaml
+    python train.py file ./config_examples/fedavg_cifar10_resnet10.yaml
 
 
 **Blades** internally calls `ray.tune <https://docs.ray.io/en/latest/tune/tutorials/tune-output.html>`_; therefore, the experimental results are output to its default directory: ``~/ray_results``.

@@ -1,53 +1,54 @@
 fedavg_blades:
   run: FEDAVG
+  storage_path: /mimer/NOBACKUP/groups/bloom/shenghui/fedlib/ray_results
   stop:
     training_iteration: 400
     # train_loss: 100
 
   config:
     random_seed:
-        # grid_search: [122, 123]
+      # grid_search: [122, 123]
       grid_search: [111]
       # grid_search: [111, 112, 123, 124, 125]
     dataset_config:
       type: CIFAR10
-      num_clients: 20
+      num_clients: 2
       num_classes: 10
       train_batch_size: 64
-      num_workers: 4
+      num_workers: 2
 
       partitioner_config:
         type: DirichletPartitioner
         alpha:
-          grid_search: [0.01, 0.05]
-        num_clients: 20
+          grid_search: [0.01]
+        num_clients: 2
 
     evaluation_interval: 50
 
-    num_remote_workers: 10
+    num_remote_workers: 2
     num_gpus_per_worker: 0.3
     num_cpus_per_worker: 6
     num_cpus_for_driver: 4
-    num_gpus_for_driver: 0.5
+    num_gpus_for_driver: 0.3
 
     global_model: resnet
 
     client_config:
-        lr: 0.1
-        num_batch_per_round: 20
-        momentum:
-          grid_search: [0.0]
+      lr: 0.1
+      num_batch_per_round: 20
+      momentum:
+        grid_search: [0.0]
 
     server_config:
       aggregator:
         grid_search: [
-          type: Mean,
-          # type: Median,
-          # type: GeoMed,
-          # type: DnC,
-          # type: Trimmedmean,
-          # type: Signguard,
-          # type: Clippedclustering,
+            type: Mean,
+            # type: Median,
+            # type: GeoMed,
+            # type: DnC,
+            # type: Trimmedmean,
+            # type: Signguard,
+            # type: Clippedclustering,
           ]
 
       optimizer:

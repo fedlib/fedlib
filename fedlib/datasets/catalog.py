@@ -7,7 +7,6 @@ from ray.rllib.utils.from_config import from_config
 from ray.tune.registry import _global_registry
 
 from fedlib.constants import FEDLIB_DATASET
-from fedlib.datasets.partitioners import IIDPartitioner
 from fedlib.utils.types import DatasetConfigDict
 from .dataset import FLDataset
 from .ucihar import UCIHAR
@@ -87,6 +86,8 @@ class DatasetCatalog:
 
     @staticmethod
     def from_torch(dataset_config: Dict = None):
+        from fedlib.datasets.partitioners import IIDPartitioner
+
         dataset_name = dataset_config.get("type", None)
         if dataset_name not in DatasetCatalog._torch_valid_datasets:
             raise ValueError(f"Unknown dataset: {dataset_name}")
